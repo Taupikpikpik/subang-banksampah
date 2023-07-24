@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>EMR - Dashboard</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/plugins/simple-calendar/simple-calendar.css">
+    <link rel="stylesheet" href="assets/css/feather.css">
+    <link rel="stylesheet" href="assets/plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <div class="header">
+        <div class="header-left">
+          <a href="index.html" class="logo">
+            <img src="assets/img/logo.png" alt="Logo">
+          </a>
+          <a href="index.html" class="logo logo-small">
+            <img src="assets/img/logo-small.png" alt="Logo" width="30" height="30">
+          </a>
+        </div>
+        <a href="javascript:void(0);" id="toggle_btn">
+          <i class="fas fa-bars"></i>
+        </a>
+        <div class="top-nav-search">
+          <form>
+            <input type="text" class="form-control" placeholder="Search here">
+            <button class="btn" type="submit">
+              <i class="fa fa-search"></i>
+            </button>
+          </form>
+        </div>
+        <a class="mobile_btn" id="mobile_btn">
+          <i class="fas fa-bars"></i>
+        </a>
+        <ul class="nav user-menu">
+          <li class="nav-item dropdown has-arrow flag-nav mr-2">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="users.html#" role="button">
+              <img src="assets/img/flags/us-1.png" alt="" width="32" height="32" class="rounded-circle">
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="assets/img/flags/us.png" alt="" height="16"> English </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="assets/img/flags/fr.png" alt="" height="16"> French </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="assets/img/flags/es.png" alt="" height="16"> Spanish </a>
+              <a href="javascript:void(0);" class="dropdown-item">
+                <img src="assets/img/flags/de.png" alt="" height="16"> German </a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="users.html#" class="nav-link notifications-item">
+              <i class="feather-bell"></i>
+              <span class="badge badge-pill">3</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="chat.html" class="dropdown-toggle nav-link chat-header">
+              <i class="feather-message-square"></i>
+              <span class="badge badge-pill header-chat">6</span>
+            </a>
+          </li>
+          <li class="nav-item dropdown has-arrow main-drop ml-md-3">
+            <a href="users.html#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+              <span class="user-img">
+                <img src="assets/img/avatar.jpg" alt="">
+                <span class="status online"></span>
+              </span>
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="profile.html">
+                <i class="feather-user"></i> My Profile </a>
+              <a class="dropdown-item" href="login.html">
+                <i class="feather-power"></i> Logout </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+          <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+              <li class="menu-title">
+                <span>Main</span>
+              </li>
+              <li>
+                <a href="index.html">
+                  <i class="feather-home"></i>
+                  <span>Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="patients.html">
+                  <i class="feather-user"></i>
+                  <span>Patients</span>
+                </a>
+              </li>
+              <li>
+                <a href="appointments.html">
+                  <i class="feather-list"></i>
+                  <span>Appointments</span>
+                  <span class="badge bg-success-text">2</span>
+                </a>
+              </li>
+              <li>
+                <a href="flow-board.html">
+                  <i class="feather-bar-chart"></i>
+                  <span>Flow Board</span>
+                </a>
+              </li>
+              <li>
+                <a href="recall-board.html">
+                  <i class="feather-calendar"></i>
+                  <span>Recall Board</span>
+                </a>
+              </li>
+              <li>
+                <a href="chat.html">
+                  <i class="feather-message-circle"></i>
+                  <span>Messages</span>
+                  <span class="badge bg-orange-text">4</span>
+                </a>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-disc"></i>
+                  <span> Procedures</span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul style="display: none;">
+                  <li>
+                    <a href="electronics-report.html">Electronics Reports</a>
+                  </li>
+                  <li>
+                    <a href="lab-documents.html">Lab Documents</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="submenu">
+                <a href="javascript:void(0);">
+                  <i class="feather-book"></i>
+                  <span>Reports</span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul style="display: none;">
+                  <li class="submenu">
+                    <a href="javascript:void(0);">
+                      <span>Clients</span>
+                      <span class="menu-arrow"></span>
+                    </a>
+                    <ul style="display: none;">
+                      <li>
+                        <a href="client-list.html">
+                          <span>List</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="client-rx.html">
+                          <span>RX</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="patient-list.html">
+                          <span>Patient List Creation</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="clinical-report.html">
+                          <span>Clinical</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="referals-report.html">
+                          <span>Reference</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="immunization-registry.html">
+                          <span>Immunization Registry</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="submenu">
+                    <a href="javascript:void(0);">
+                      <span>Clinics</span>
+                      <span class="menu-arrow"></span>
+                    </a>
+                    <ul style="display: none;">
+                      <li>
+                        <a href="report-results.html">
+                          <span>Report Results</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="standard-measures.html">
+                          <span>Standard Measures</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="quality-measures.html">
+                          <span>Quality Measures (CQM)</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="automated-measures.html">
+                          <span>Automated Measures (AMC)</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="amc-tracking.html">
+                          <span>AMC Tracking</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="alert-log.html">
+                          <span>Alerts Log</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="submenu">
+                    <a href="javascript:void(0);">
+                      <span>Visits</span>
+                      <span class="menu-arrow"></span>
+                    </a>
+                    <ul style="display: none;">
+                      <li>
+                        <a href="appointments-visit.html">
+                          <span>Appointments</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="flow-board-record.html">
+                          <span>Patient Flow Board</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="submenu">
+                    <a href="javascript:void(0);">
+                      <span>Procedure</span>
+                      <span class="menu-arrow"></span>
+                    </a>
+                    <ul style="display: none;">
+                      <li>
+                        <a href="pending-orders.html">
+                          <span>Pending Res</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="submenu">
+                    <a href="javascript:void(0);">
+                      <span>Insurance</span>
+                      <span class="menu-arrow"></span>
+                    </a>
+                    <ul style="display: none;">
+                      <li>
+                        <a href="unique-insurance.html">
+                          <span>Unique SP</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="settings.html">
+                  <i class="feather-settings"></i>
+                  <span>Settings</span>
+                </a>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-grid"></i>
+                  <span> Application</span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="calendar.html">Calendar</a>
+                  </li>
+                  <li>
+                    <a href="inbox.html">Email</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-title">
+                <span>Pages</span>
+              </li>
+              <li>
+                <a href="profile.html">
+                  <i class="feather-user-plus"></i>
+                  <span>Profile</span>
+                </a>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-lock"></i>
+                  <span> Authentication </span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="login.html"> Login </a>
+                  </li>
+                  <li>
+                    <a href="register.html"> Register </a>
+                  </li>
+                  <li>
+                    <a href="forgot-password.html"> Forgot Password </a>
+                  </li>
+                  <li>
+                    <a href="lock-screen.html"> Lock Screen </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-alert-octagon"></i>
+                  <span> Error Pages </span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="error-404.html">404 Error </a>
+                  </li>
+                  <li>
+                    <a href="error-500.html">500 Error </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="active">
+                <a href="users.html">
+                  <i class="feather-user"></i>
+                  <span class="shape1"></span>
+                  <span class="shape2"></span>
+                  <span>Users</span>
+                </a>
+              </li>
+              <li>
+                <a href="blank-page.html">
+                  <i class="feather-file"></i>
+                  <span>Blank Page</span>
+                </a>
+              </li>
+              <li>
+                <a href="maps-vector.html">
+                  <i class="feather-map-pin"></i>
+                  <span>Vector Maps</span>
+                </a>
+              </li>
+              <li class="menu-title">
+                <span>UI Interface</span>
+              </li>
+              <li>
+                <a href="components.html">
+                  <i class="feather-layers"></i>
+                  <span>Components</span>
+                </a>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-sidebar"></i>
+                  <span> Forms </span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="form-basic-inputs.html">Basic Inputs </a>
+                  </li>
+                  <li>
+                    <a href="form-input-groups.html">Input Groups </a>
+                  </li>
+                  <li>
+                    <a href="form-horizontal.html">Horizontal Form </a>
+                  </li>
+                  <li>
+                    <a href="form-vertical.html"> Vertical Form </a>
+                  </li>
+                  <li>
+                    <a href="form-mask.html"> Form Mask </a>
+                  </li>
+                  <li>
+                    <a href="form-validation.html"> Form Validation </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="submenu">
+                <a href="users.html#">
+                  <i class="feather-layout"></i>
+                  <span> Tables </span>
+                  <span class="menu-arrow"></span>
+                </a>
+                <ul>
+                  <li>
+                    <a href="tables-basic.html">Basic Tables </a>
+                  </li>
+                  <li>
+                    <a href="data-tables.html">Data Table </a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="page-wrapper">
+        <div class="content container-fluid">
+          <div class="page-header">
+            <div class="row align-items-center">
+              <div class="col-md-12">
+                <div class="d-flex align-items-center">
+                  <h5 class="page-title">Dashboard</h5>
+                  <ul class="breadcrumb ml-2">
+                    <li class="breadcrumb-item">
+                      <a href="index.html">
+                        <i class="fas fa-home"></i>
+                      </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                      <a href="index.html">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active">Users</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Data Users</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table datatable">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Registered On</th>
+                          <th>Role</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-01.jpg" alt="User Image"> Charles Hafner </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="791a11180b151c0a11181f171c0b391c01181409151c571a1614">[email&#160;protected]</a>
+                          </td>
+                          <td>16 Nov 2020</td>
+                          <td>
+                            <span class="text-success">Admin</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-02.jpg" alt="User Image"> Brian Johnson </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="680a1a010906020700061b0706280d10090518040d460b0705">[email&#160;protected]</a>
+                          </td>
+                          <td>16 Nov 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-03.jpg" alt="User Image"> Marie Canales </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="7f121e0d161a1c1e111e131a0c3f1a071e120f131a511c1012">[email&#160;protected]</a>
+                          </td>
+                          <td>8 Nov 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-danger-light">Inactive</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-04.jpg" alt="User Image"> Barbara Moore </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="73111201111201121e1c1c011633160b121e031f165d101c1e">[email&#160;protected]</a>
+                          </td>
+                          <td>24 Oct 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-05.jpg" alt="User Image"> Greg Lynch </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="c5a2b7a0a2a9bcaba6ad85a0bda4a8b5a9a0eba6aaa8">[email&#160;protected]</a>
+                          </td>
+                          <td>11 Oct 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-danger-light">Inactive</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-06.jpg" alt="User Image"> Karlene Chaidez </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="741f150618111a11171c151d10110e34110c15190418115a171b19">[email&#160;protected]</a>
+                          </td>
+                          <td>29 Sep 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-danger-light">Inactive</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-07.jpg" alt="User Image"> John Blair </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="c6aca9aea8a4aaa7afb486a3bea7abb6aaa3e8a5a9ab">[email&#160;protected]</a>
+                          </td>
+                          <td>13 Aug 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-08.jpg" alt="User Image"> Russell Copeland </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="dba9aea8a8beb7b7b8b4abbeb7bab5bf9bbea3bab6abb7bef5b8b4b6">[email&#160;protected]</a>
+                          </td>
+                          <td>2 Jul 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-danger-light">Inactive</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-09.jpg" alt="User Image"> Leatha Bailey </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="375b5256435f5655565e5b524e77524f565a475b521954585a">[email&#160;protected]</a>
+                          </td>
+                          <td>20 Jun 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-10.jpg" alt="User Image"> Joseph Collins </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="204a4f53455048434f4c4c494e53604558414d504c">[email&#160;protected]</a>e.com
+                          </td>
+                          <td>9 May 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-11.jpg" alt="User Image"> Jennifer Floyd </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="315b545f5f58575443575d5e4855715449505c415d541f525e5c">[email&#160;protected]</a>
+                          </td>
+                          <td>17 Apr 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-12.jpg" alt="User Image"> Alex Campbell </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="dcbdb0b9a4bfbdb1acbeb9b0b09cb9a4bdb1acb0b9f2bfb3b1">[email&#160;protected]</a>
+                          </td>
+                          <td>30 Mar 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <h2 class="table-avatar">
+                              <a href="profile.html">
+                                <img class="avatar avatar-sm mr-2 avatar-img rounded-circle" src="assets/img/profiles/avatar-13.jpg" alt="User Image"> Wendell Ward </a>
+                            </h2>
+                          </td>
+                          <td>
+                            <a href="cdn-cgi/l/email-protection.html" class="__cf_email__" data-cfemail="b6c1d3d8d2d3dadac1d7c4d2f6d3ced7dbc6dad398d5d9db">[email&#160;protected]</a>
+                          </td>
+                          <td>22 Feb 2020</td>
+                          <td>
+                            <span class="text-info">Patient</span>
+                          </td>
+                          <td>
+                            <span class="badge badge-pill bg-success-light">Active</span>
+                          </td>
+                          <td class="text-right">
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-success mr-2">
+                              <i class="far fa-edit mr-1"></i> Edit </a>
+                            <a href="javascript:void(0);" class="btn btn-sm btn-white text-danger mr-2">
+                              <i class="far fa-trash-alt mr-1"></i>Delete </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="notifications">
+        <div class="topnav-dropdown-header">
+          <span class="notification-title">Notifications</span>
+          <a href="javascript:void(0)" class="clear-noti">
+            <i class="feather-x-circle"></i>
+          </a>
+        </div>
+        <div class="noti-content">
+          <ul class="notification-list">
+            <li class="notification-message">
+              <a href="users.html#">
+                <div class="media">
+                  <span class="avatar">
+                    <img alt="" src="assets/img/profiles/avatar-02.jpg" class="rounded-circle">
+                  </span>
+                  <div class="media-body">
+                    <p class="noti-details">
+                      <span class="noti-title">John Doe</span> added new task <span class="noti-title">Patient appointment booking</span>
+                    </p>
+                    <p class="noti-time">
+                      <span class="notification-time">4 mins ago</span>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="notification-message">
+              <a href="users.html#">
+                <div class="media">
+                  <span class="avatar">
+                    <img alt="" src="assets/img/profiles/avatar-03.jpg" class="rounded-circle">
+                  </span>
+                  <div class="media-body">
+                    <p class="noti-details">
+                      <span class="noti-title">Tarah Shropshire</span> changed the task name <span class="noti-title">Appointment booking with payment gateway</span>
+                    </p>
+                    <p class="noti-time">
+                      <span class="notification-time">6 mins ago</span>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="notification-message">
+              <a href="users.html#">
+                <div class="media">
+                  <span class="avatar">
+                    <img alt="" src="assets/img/profiles/avatar-06.jpg" class="rounded-circle">
+                  </span>
+                  <div class="media-body">
+                    <p class="noti-details">
+                      <span class="noti-title">Misty Tison</span> added <span class="noti-title">Domenic Houston</span> and <span class="noti-title">Claire Mapes</span> to project <span class="noti-title">Doctor available module</span>
+                    </p>
+                    <p class="noti-time">
+                      <span class="notification-time">8 mins ago</span>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="notification-message">
+              <a href="users.html#">
+                <div class="media">
+                  <span class="avatar">
+                    <img alt="" src="assets/img/profiles/avatar-17.jpg" class="rounded-circle">
+                  </span>
+                  <div class="media-body">
+                    <p class="noti-details">
+                      <span class="noti-title">Rolland Webber</span> completed task <span class="noti-title">Patient and Doctor video conferencing</span>
+                    </p>
+                    <p class="noti-time">
+                      <span class="notification-time">12 mins ago</span>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="notification-message">
+              <a href="users.html#">
+                <div class="media">
+                  <span class="avatar">
+                    <img alt="" src="assets/img/profiles/avatar-13.jpg" class="rounded-circle">
+                  </span>
+                  <div class="media-body">
+                    <p class="noti-details">
+                      <span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span>
+                    </p>
+                    <p class="noti-time">
+                      <span class="notification-time">2 days ago</span>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="topnav-dropdown-footer">
+          <a href="javascript:void(0);">View all Notifications</a>
+        </div>
+      </div>
+    </div>
+    <script data-cfasync="false" src="cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="assets/js/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="assets/plugins/datatables/datatables.min.js"></script>
+    <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>
