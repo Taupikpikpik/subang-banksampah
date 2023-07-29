@@ -8,6 +8,8 @@ use Alert;
 use App\Models\KategoriSampah;
 use App\Models\BankSampah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class BankSampahController extends Controller
 {
@@ -20,7 +22,7 @@ class BankSampahController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -55,11 +57,21 @@ class BankSampahController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
-        
+
+        if ($request->hasFile('icon')) {
+            $image = $request->file('icon');
+            $originalFileName = $image->getClientOriginalName();
+            $encryptedFileName = Crypt::encryptString(pathinfo($originalFileName, PATHINFO_FILENAME));
+            $limitedEncryptedFileName = substr($encryptedFileName, 0, 15);
+
+            $nama_icon = $limitedEncryptedFileName . '.' . $image->getClientOriginalExtension();
+            $image->move('uploads/images', $nama_icon);
+            $requestData['icon'] = $nama_icon;
+        }
         BankSampah::create($requestData);
-        alert()->success('New ' . 'BankSampah'. ' Created!' );
+        alert()->success('New ' . 'BankSampah' . ' Created!');
 
         return redirect('admin/bank-sampah');
     }
@@ -104,10 +116,21 @@ class BankSampahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
         $requestData = $request->all();
         $banksampah = BankSampah::findOrFail($id);
-        alert()->success('Record Updated!' );
+
+        if ($request->hasFile('icon')) {
+
+            $image = $request->file('icon');
+            $originalFileName = $image->getClientOriginalName();
+            $encryptedFileName = Crypt::encryptString(pathinfo($originalFileName, PATHINFO_FILENAME));
+            $limitedEncryptedFileName = substr($encryptedFileName, 0, 15);
+
+            $nama_icon = $limitedEncryptedFileName . '.' . $image->getClientOriginalExtension();
+            $image->move('uploads/images', $nama_icon);
+            $requestData['icon'] = $nama_icon;
+        }
+        alert()->success('Record Updated!');
         $banksampah->update($requestData);
 
         return redirect('admin/bank-sampah');
@@ -122,7 +145,7 @@ class BankSampahController extends Controller
      */
     public function destroy($id)
     {
-        alert()->success('Record Deleted!' );
+        alert()->success('Record Deleted!');
         BankSampah::destroy($id);
 
         return redirect('admin/bank-sampah');

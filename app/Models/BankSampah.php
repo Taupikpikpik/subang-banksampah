@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BankSampah extends Model
 {
-    
+
 
     /**
      * The database table used by the model.
@@ -16,10 +16,10 @@ class BankSampah extends Model
     protected $table = 'bank_sampahs';
 
     /**
-    * The database primary key value.
-    *
-    * @var string
-    */
+     * The database primary key value.
+     *
+     * @var string
+     */
     protected $primaryKey = 'id';
 
     /**
@@ -27,11 +27,19 @@ class BankSampah extends Model
      *
      * @var array
      */
-    protected $fillable = ['nama_sampah', 'id_kategori_sampah', 'stok', 'harga_beli', 'harga_jual','status_sampah'];
+    protected $fillable = [
+        'nama_sampah',
+        'id_kategori_sampah',
+        'stok',
+        'harga_beli',
+        'harga_jual',
+        'status_sampah',
+        'icon'
+    ];
 
-    
+
     public function kategori()
     {
-            return $this->hasOne(KategoriSampah::class, 'id', 'id_kategori_sampah');
+        return $this->hasOne(KategoriSampah::class, 'id', 'id_kategori_sampah');
     }
 }
