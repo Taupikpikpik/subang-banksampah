@@ -47,7 +47,30 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label for="status_beli">Status Pembelian</label>
+                                        {!! Form::select(
+                                            'status_beli',
+                                            [
+                                                'Pilih' => 'Pilih',
+                                                'Menunggu Pengambilan Di Bank Sampah' => 'Menunggu Pengambilan Di Bank Sampah',
+                                                'Pembelian Berhasil' => 'Pembelian Berhasil',
+                                                'Pembelian Ditolak' => 'Pembelian Ditolak',
+                                            ],
+                                            '', // Set 'Pembelian Berhasil' as the default value
+                                            ['class' => 'form-control', 'id' => 'status_beli'],
+                                        ) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                         <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <button type="button" onclick="submitForm()" class="btn btn-danger"><i
+                                                class="fa fa-file-pdf">
+                                                Export PDF</i></button>
                                     </div>
                                 </div>
                             </div>
@@ -57,14 +80,14 @@
                     @if ($start_date && $end_date != null)
                         <div class="table-responsive">
                             <table class="table" id="table" id="report">
-                                <h3>Laporan Pembelian Sampah Tanggal {{ $start_date }} - {{ $end_date }}</h3>
+                                <h3>Laporan Pembelian Sampah Dari Tanggal {{ $start_date }} - {{ $end_date }}</h3>
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th>Pengepul</th>
                                         <th>Tanggal</th>
                                         <th>Status</th>
-                                        <th>Aksi</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -83,17 +106,32 @@
                                 </tbody>
                             </table>
                             <br>
-                            <form action="{{ route('export.pembelian') }}" method="get">
+                            <form action="{{ route('export.pembelian') }}" method="get" id="myForm">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="start_date" value="{{ $start_date }}">
                                 <input type="hidden" name="end_date" value="{{ $end_date }}">
                                 <input type="hidden" name="pembelian" value="{{ $pembelian }}">
                                 <input type="hidden" name="total_pembayaran" value="{{ $total_pembayaran }}">
-                                <button type="submit" class="btn btn-danger"><i class="fa fa-file-pdf"> Export
+                                <button type="submit" style="display: none" class="btn btn-danger"><i
+                                        class="fa fa-file-pdf">
+                                        Export
                                         PDF</i></button>
                             </form>
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Pembelian</h5>
+                    <button type="button" class="btn btn-secondary btn-close bg-light text-dark btn-sm">X</button>
+                </div>
+                <div class="modal-body modal-detail">
                 </div>
             </div>
         </div>
@@ -106,6 +144,12 @@
         $('.btn-close').click(function() {
             $('#modalDetail').modal('hide')
         })
+
+        const form = document.getElementById('myForm');
+
+        function submitForm() {
+            form.submit(); // Panggil fungsi submit() pada objek formulir
+        }
         // Add an event listener to the export button
         document.getElementById('export-btn').addEventListener('click', function() {
             // Get the table element by its ID
@@ -122,19 +166,6 @@
             XLSX.writeFile(workbook, 'laporan-pembelian.xlsx');
         });
     </script>
-    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detail Pembelian</h5>
-                    <button type="button" class="btn btn-secondary btn-close bg-light text-dark btn-sm">X</button>
-                </div>
-                <div class="modal-body modal-detail">
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 @include('home.partials.scripts')
 <script>

@@ -20,12 +20,12 @@
                 </div>
                 <div class="col text-center">
                     <div class="logo-small">
-                        <img src="{{asset('vendor/landing')}}/assets/img/logo.png" alt="" class="img">
+                        <img src="{{ asset('vendor/landing') }}/assets/img/logo.png" alt="" class="img">
                         <h6>DLH<br><small>Subang</small></h6>
                     </div>
                 </div>
                 <div class="col-auto align-self-center">
-                    <a href="{{url('profile')}}" class="link text-color-theme">
+                    <a href="{{ url('profile') }}" class="link text-color-theme">
                         <i class="bi bi-person-circle size-22"></i>
                     </a>
                 </div>
@@ -37,25 +37,28 @@
         <div class="main-container container">
 
             <!-- expense  saving -->
-            <div class="row">
-                <div class="col">
-                    <div class="card shadow-sm product mb-4">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-auto">
-                                    <div class="avatar avatar-50 rounded bg-danger text-white">
-                                        <i class="bi bi-credit-card"></i>
+            <a href="/withdraw">
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow-sm product mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <div class="avatar avatar-50 rounded bg-danger text-white">
+                                            <i class="bi bi-credit-card"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col ps-0 align-self-center">
-                                    <span class="small text-opac mb-0">Saldo</span>
-                                    <p class="mb-1">Rp. {{number_format($saldo->jumlah_saldo,2,',','.')}}</p>
+                                    <div class="col ps-0 align-self-center">
+                                        <span class="small text-opac mb-0">Saldo</span>
+                                        <p class="mb-1">Rp. {{ number_format($saldo->jumlah_saldo, 2, ',', '.') }}</p>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </a>
 
             <!-- purchase fatg -->
             <div class="row">
@@ -65,7 +68,7 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="mb-1">Sampah Terjual</p>
-                                    <h2>{{$penjualan}} <small>kg</small></h2>
+                                    <h2>{{ $penjualan }} <small>kg</small></h2>
                                 </div>
                             </div>
                         </div>
@@ -79,17 +82,17 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    @foreach($kategori as $item)
-                    <div class="swiper-slide">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#detail{{$item->id}}">
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <img src="{{asset('uploads/images')}}/{{$item->icon}}" alt="">
-                            </div>
+                    @foreach ($kategori as $item)
+                        <div class="swiper-slide">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#detail{{ $item->id }}">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <img src="{{ asset('uploads/images') }}/{{ $item->icon }}" alt="">
+                                    </div>
+                                </div>
+                                <p class="categoryname">{{ $item->nama_kategori }}</p>
+                            </a>
                         </div>
-                        <p class="categoryname">{{$item->nama_kategori}}</p>
-                        </a>
-                    </div>
                     @endforeach
                 </div>
             </div>
@@ -128,14 +131,16 @@
                 <div class="row mb-4">
                     <div class="col">
                         <div class="form-floating">
-                            <input type="number" class="form-control" min="0" max="500" value="100" step="1" id="input-select">
+                            <input type="number" class="form-control" min="0" max="500" value="100"
+                                step="1" id="input-select">
                             <label for="input-select">Minimum</label>
                         </div>
                     </div>
                     <div class="col-auto align-self-center"> to </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="number" class="form-control" min="0" max="500" value="200" step="1" id="input-number">
+                            <input type="number" class="form-control" min="0" max="500" value="200"
+                                step="1" id="input-number">
                             <label for="input-number">Maximum</label>
                         </div>
                     </div>
@@ -198,30 +203,31 @@
     <!-- filter menu ends-->
 
     <!-- add cart modal -->
-    @foreach($kategori as $item)
-    <div class="modal fade" id="detail{{$item->id}}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content product border-0 shadow-sm">
-                <div class="modal-body">
-                    @foreach($bank as $data)
-                    @if($data->id_kategori_sampah == $item->id)
-                    <tbody>
-                        <tr>
-                            <td>-</td>
-                            <td>{{$data->nama_sampah}} : </td>
-                            <td>Rp.{{$data->harga_beli}}</td>
-                        </tr>
-                    </tbody>
-                    <br>
-                    @endif
-                    @endforeach
-                </div>
-                    <div class="modal-footer justify-content-center">
-                        <button type="submit" class="btn btn-link text-color-theme" data-bs-dismiss="modal">OK</button>
+    @foreach ($kategori as $item)
+        <div class="modal fade" id="detail{{ $item->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content product border-0 shadow-sm">
+                    <div class="modal-body">
+                        @foreach ($bank as $data)
+                            @if ($data->id_kategori_sampah == $item->id)
+                                <tbody>
+                                    <tr>
+                                        <td>-</td>
+                                        <td>{{ $data->nama_sampah }} : </td>
+                                        <td>Rp.{{ $data->harga_beli }}</td>
+                                    </tr>
+                                </tbody>
+                                <br>
+                            @endif
+                        @endforeach
                     </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-link text-color-theme"
+                            data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
     @endforeach
     <!-- add cart modal ends -->
 

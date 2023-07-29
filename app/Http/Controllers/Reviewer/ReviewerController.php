@@ -42,12 +42,18 @@ class ReviewerController extends Controller
     {
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
+        $status = $request->input('status');
 
-        if($request->start_date != null && $request->end_date != null) {
-            $penjualan = PenjualanSampah::where('status_penjualan', 'Penjualan Berhasil')
-                ->whereDate('updated_at', '>=', $start_date)
-                ->whereDate('updated_at', '<=',  $end_date)
-                ->get();
+        if ($request->start_date != null && $request->end_date != null) {
+            $penjualan = PenjualanSampah::whereDate('updated_at', '>=', $start_date)
+                ->whereDate('updated_at', '<=',  $end_date);
+
+            // Check if the status is selected or 'Pilih'
+            if ($status !== '' && $status !== 'Pilih') {
+                $penjualan->where('status_penjualan', $status);
+            }
+
+            $penjualan = $penjualan->get();
 
             // Calculate the total pembayaran
             $total_pembayaran = $penjualan->sum('total');
@@ -59,16 +65,29 @@ class ReviewerController extends Controller
 
     }
 
+    public function exportPenjualan(Request $request) {
+        $data['start_date'] = $request->input('start_date');
+        $data['end_date'] = $request->input('end_date');
+        $data['penjualan'] = json_decode($request->penjualan);
+        $data['total_pembayaran'] = $request->total_pembayaran;
+
+        return view('reviewer.export-laporan-penjualan', $data);
+    }
+
     public function reportPembelian(Request $request)
     {
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
+        $status = $request->input('status_beli');
 
         if($request->start_date != null && $request->end_date != null) {
             $pembelian = PembelianSampah::whereDate('updated_at', '>=', $start_date)
-                ->whereDate('updated_at', '<=',  $end_date)
-                ->get();
+                ->whereDate('updated_at', '<=',  $end_date);
 
+                if ($status !== '' && $status !== 'Pilih') {
+                    $pembelian->where('status_pembelian', $status);
+                }
+                $pembelian = $pembelian->get();
             // Calculate the total pembayaran
             $total_pembayaran = $pembelian->sum('total');
             return view('reviewer.laporan-pembelian', compact('pembelian', 'total_pembayaran', 'start_date', 'end_date'));
@@ -76,6 +95,14 @@ class ReviewerController extends Controller
             return view('reviewer.laporan-pembelian', compact('start_date', 'end_date'));
 
         }
+    }
 
+    public function exportPembelian(Request $request) {
+        $data['start_date'] = $request->input('start_date');
+        $data['end_date'] = $request->input('end_date');
+        $data['pembelian'] = json_decode($request->pembelian);
+        $data['total_pembayaran'] = $request->total_pembayaran;
+
+        return view('reviewer.export-laporan-pembelian', $data);
     }
 }

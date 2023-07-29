@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Report Document</title>
+    <title>Laporan Pembelian</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <style>
@@ -10,16 +11,25 @@
         }
     </style>
 </head>
+
+@php
+    use Illuminate\Support\Carbon;
+    use App\Models\PembelianSampahDetail;
+    Carbon::setLocale('id');
+@endphp
+
 <body>
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <img src="{{asset('head.jpg')}}" class="img-responsive center-block">
+                <img src="{{ asset('head.jpg') }}" class="img-responsive center-block">
             </div>
         </div>
         <div class="row">
             <div class="col-xs-12 text-center">
-                <u><b><h3>Laporan Pembelian Periode {{$start_date}} - {{$end_date}}</h3></b></u>
+                <u><b>
+                        <h3>Laporan Pembelian Periode {{ $start_date }} - {{ $end_date }}</h3>
+                    </b></u>
             </div>
         </div>
         <div class="row">
@@ -37,25 +47,60 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pembelian as $i => $item)
                         @php
-                            dd($item);
+                            $num = 1;
+                            $totalHarga = 0; // Initialize a variable to store the total sum
                         @endphp
-                        <tr>
-                            <td>{{ $i+1 }}</td>
-                            <td>{{ $item->pengepul->name }}</td>
-                            <td>{{ $item->sampah->nama_sampah }}</td>
-                            <td>{{ $item->kuantitas }}</td>
-                            <td>{{ $item->total }}</td>
-                            <td>{{ date("Y-m-d", strtotime($item->updated_at)) }}</td>
-                            <td>{{ $item->status_pembelian }}</td>
-                        </tr>
+                        @foreach ($pembelian as $i => $item)
+                            @php
+                                $detail = PembelianSampahDetail::with('sampah')
+                                    ->where('id_pembelian_sampah', $item->id)
+                                    ->get();
+                                if (!$detail) {
+                                    continue;
+                                }
+                            @endphp
+                            @foreach ($detail as $a => $det)
+                                <tr>
+                                    @if (count($detail) > 1)
+                                        @if ($a < 1)
+                                            <td rowspan="2">{{ $i + 1 }}</td>
+                                            <td rowspan="2">{{ $item->pengepul->name }}</td>
+                                        @endif
+                                    @else
+                                        <td>{{ $i + 1 }}</td>
+                                        <td>{{ $item->pengepul->name }}</td>
+                                    @endif
+                                    <td>{{ $det->sampah->nama_sampah }}</td>
+                                    <td>{{ $det->kuantitas }}</td>
+                                    <td>{{ $det->total }}</td>
+
+                                    @php
+                                        // Add the "total" value to the running totalHarga
+                                        $totalHarga += $det->total;
+                                    @endphp
+
+                                    @if (count($detail) > 1)
+                                        @if ($a < 1)
+                                            <td rowspan="2">{{ date('Y-m-d', strtotime($item->updated_at)) }}</td>
+                                            <td rowspan="2">{{ $item->status_pembelian }}</td>
+                                        @endif
+                                    @else
+                                        <td>{{ date('Y-m-d', strtotime($item->updated_at)) }}</td>
+                                        <td>{{ $item->status_pembelian }}</td>
+                                    @endif
+
+                                </tr>
+                            @endforeach
+                            @php
+                                $num++;
+                            @endphp
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4" align="right"><strong>Total:</strong></td>
-                            <td>{{ $total_pembayaran }}</td>
+                            <td>{{ $totalHarga }}</td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -66,22 +111,33 @@
         <div class="row mt-5">
             <div class="col-md-12 text-right">
                 {{-- <img src="{{asset('sign.png')}}" style="width:100px;" alt="Signature" class="img-fluid"> --}}
-                <b><p class="mt-3">{{Auth::user()->name}}</p></b>
-                <p class="mt-3">Admin Bank Sampah Induk</p>
+                <b>
+                    <p class="mt-3">{{ Carbon::now()->translatedFormat('l, d-F-Y') }}</p>
+                </b>
+                <b>
+                    <p class="mt-3">{{ Auth::user()->jabatan }}</p>
+                </b>
+                <br>
+                <br>
+                <br>
+                <b>
+                    <p class="mt-3">{{ Auth::user()->name }}</p>
+                </b>
             </div>
-            </div>
+        </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-    // Print the page as PDF when the document is ready
-    window.print();
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Print the page as PDF when the document is ready
+            window.print();
 
-    // Close the window after the print dialog is closed
-    $(window).on('afterprint', function() {
-        window.close();
-    });
-    });
-</script>
+            // Close the window after the print dialog is closed
+            $(window).on('afterprint', function() {
+                window.close();
+            });
+        });
+    </script>
 </body>
+
 </html>

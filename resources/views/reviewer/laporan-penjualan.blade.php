@@ -47,10 +47,25 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label for="status">Status Penjualan</label>
+                                        {!! Form::select(
+                                            'status',
+                                            [
+                                                'Pilih' => 'Pilih',
+                                                'Penjualan Berhasil' => 'Penjualan Berhasil',
+                                                'Menunggu Kedatangan Petugas' => 'Menunggu Kedatangan Petugas',
+                                                'Menunggu Konfirmasi Admin' => 'Menunggu Konfirmasi Admin',
+                                            ],
+                                            '', // Set 'Penjualan Berhasil' as the default value
+                                            ['class' => 'form-control', 'id' => 'status'],
+                                        ) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                         <button type="submit" class="btn btn-primary">Filter</button>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <button type="button" onclick="submitForm()" class="btn btn-danger"><i
@@ -70,11 +85,9 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Nasabah</th>
-                                        <th>Nama Sampah</th>
-                                        <th>Kuantitas</th>
-                                        <th>Total Harga</th>
                                         <th>Tanggal</th>
                                         <th>Status</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,22 +95,15 @@
                                         <tr>
                                             <td>{{ $i + 1 }}</td>
                                             <td>{{ $item->nasabah->name }}</td>
-                                            <td>{{ $item->sampah->nama_sampah }}</td>
-                                            <td>{{ $item->kuantitas }}</td>
-                                            <td>{{ $item->total }}</td>
                                             <td>{{ $item->updated_at }}</td>
                                             <td>{{ $item->status_penjualan }}</td>
+                                            <td>
+                                                <button type="button" onclick="detailData(<?= $item->id ?>)"
+                                                    class="btn btn-info text-white">Detail</button>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="4" align="right"><strong>Total:</strong></td>
-                                        <td>{{ $total_pembayaran }}</td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
                             </table>
                             <br>
                             <form action="{{ route('export.penjualan') }}" method="get" id="myForm">
@@ -108,10 +114,24 @@
                                 <input type="hidden" name="total_pembayaran" value="{{ $total_pembayaran }}">
                                 <button type="submit" style="display: none" class="btn btn-danger"><i
                                         class="fa fa-file-pdf">
-                                        Export PDF</i></button>
+                                        Export
+                                        PDF</i></button>
                             </form>
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Penjualan</h5>
+                    <button type="button" class="btn btn-secondary btn-close bg-light text-dark btn-sm">X</button>
+                </div>
+                <div class="modal-body modal-detail">
                 </div>
             </div>
         </div>
@@ -121,12 +141,16 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script>
-        // Add an event listener to the export button
+        $('.btn-close').click(function() {
+            $('#modalDetail').modal('hide')
+        })
+
         const form = document.getElementById('myForm');
 
         function submitForm() {
             form.submit(); // Panggil fungsi submit() pada objek formulir
         }
+        // Add an event listener to the export button
         document.getElementById('export-btn').addEventListener('click', function() {
             // Get the table element by its ID
             var table = document.getElementById('report');
@@ -143,3 +167,47 @@
         });
     </script>
 @endsection
+@include('home.partials.scripts')
+<script>
+    function detailData(num) {
+        $.ajax({
+            url: '/get-detail-penjualan/' + num,
+            type: 'GET',
+            success: function(res) {
+                let dataSampah = `
+                            <tr>
+                                <td>No</td>
+                                <td>Nama Sampah</td>
+                                <td>Kuantitas</td>
+                                <td>Total</td>
+                            </tr>`
+                let total = 0
+
+                $.each(res.data, (i, val) => {
+                    dataSampah += `
+                            <tr>
+                                <td>${i+1}</td>
+                                <td>${val.sampah.nama_sampah}</td>
+                                <td>${val.kuantitas}</td>
+                                <td>${val.total}</td>
+                            </tr>
+                        `
+                    total += parseInt(val.total)
+                })
+                dataSampah += `
+                            <tr>
+                                <td colspan="3">&nbsp;</td>
+                                <td>${total}</td>
+                            </tr>
+                        `
+
+                $('.modal-detail').html(`
+                        <table class='table'>
+                            ${dataSampah}
+                        </table>
+                    `)
+                $('#modalDetail').modal('show')
+            }
+        });
+    }
+</script>

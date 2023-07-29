@@ -67,7 +67,7 @@ class HomeController extends Controller
             return view('home.login');
         }
         $data['pembelian'] = PembelianSampah::with('detail')->where('id_pengepul', Auth::id())->get();
-        
+
 		return view('home.purchase', $data);
 	}
 
@@ -206,6 +206,8 @@ class HomeController extends Controller
         join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
         ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
         ->where('jadwal_pengambilan.id_petugas', Auth::id())->get();
+
+        $data['detail'] = PenjualanSampahDetail::all();
 		return view('home.jadwal-petugas', $data);
 	}
 
@@ -213,7 +215,7 @@ class HomeController extends Controller
         $jadwal = JadwalPengambilan::find($id);
         $jadwal->status = 'Sampah Telah Diambil';
         $jadwal->save();
-        
+
         $total_penjualan = 0;
         $penjualan = PenjualanSampahDetail::where('id_penjualan_sampah', $jadwal->id_penjualan)->get();
         foreach ($penjualan as $value) {
@@ -227,8 +229,12 @@ class HomeController extends Controller
         $penjualan = PenjualanSampah::find($jadwal->id_penjualan);
         $penjualan->status_penjualan = 'Penjualan Berhasil';
         $penjualan->save();
-        
-        
+
+        $detail = PenjualanSampahDetail::where('id', Request()->input('detail_id'))->first();
+        $detail->kuantitas = Request()->input('kuantitas');
+        $detail->total = Request()->input('total');
+        $detail->save();
+
         $saldoAdmin = Saldo::find(1);
         $saldoAdmin->jumlah_saldo -= $penjualan->total;
         $saldoAdmin->save();
@@ -238,6 +244,7 @@ class HomeController extends Controller
         $saldoNasabah->save();
 
         alert()->success('Pengambilan Barang Penjualan Berhasil');
+        // dd($detail->kuantitas);
         return redirect('/petugas');
     }
 
@@ -253,7 +260,7 @@ class HomeController extends Controller
     public function storeSell(Request $request) {
         $data_detail = [];
         $getData = PenjualanSampah::where('status_penjualan','Menunggu Konfirmasi Admin')->where('id_nasabah', Auth::id())->count();
-        
+
         if($getData > 0){
             alert()->error('Ada request penjualan yang belum diproses');
             return redirect('/sell/create');
@@ -274,7 +281,7 @@ class HomeController extends Controller
         }
         $detail =  PenjualanSampahDetail::insert($data_detail);
 
-    
+
         $transaksi = new TransaksiSampah;
         $transaksi->id_sampah = $data_detail[0]['id_sampah'];
         $transaksi->kuantitas = $data_detail[0]['kuantitas'];
@@ -329,8 +336,8 @@ class HomeController extends Controller
 		$request->validate([
             'email' => 'required',
             'password' => 'required',
-            
-        ]);   
+
+        ]);
         $email = $request->get('email');
         $credentials = $request->only('email', 'password');
         $user = User::where('email', $email)->first();
@@ -344,7 +351,7 @@ class HomeController extends Controller
             session(["role" => $user->role]);
             // alert()->success('Login Success');
             return redirect('/');
-        } 
+        }
         else if (auth()->guard('web')->attempt($credentials) && $user->role == 'pengepul') {
             session(["email" => $email]);
             session(["role" => $user->role]);

@@ -33,7 +33,7 @@ Route::post('/sell/store', 'Home\HomeController@storeSell');
 
 Route::get('/petugas', 'Home\HomeController@indexPetugas');
 Route::get('/petugas/jadwal', 'Home\HomeController@jadwalPetugas');
-Route::get('/petugas/jadwal/{id}', 'Home\HomeController@petugasApprove');
+Route::post('/petugas/jadwal/{id}', 'Home\HomeController@petugasApprove');
 
 Route::get('/pengepul', 'Home\HomeController@indexPengepul');
 Route::get('/pengepul/pembelian', 'Home\HomeController@purchase');

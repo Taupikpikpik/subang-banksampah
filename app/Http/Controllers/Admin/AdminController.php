@@ -68,7 +68,7 @@ class AdminController extends Controller
         $data['nasabah'] = User::where('role', 'nasabah')->count();
         $data['sampah'] = BankSampah::count();
         $data['transaksi'] = TransaksiSampah::count();
-        $jadwal = JadwalPengambilan::where('status', "Jadwal Telah Dibuat")->get();
+        $jadwal = JadwalPengambilan::all();
         return view('admin.dashboard', $data, compact('jadwal'));
     }
 
@@ -112,12 +112,16 @@ class AdminController extends Controller
     {
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
+        $status = $request->input('status_beli');
 
         if($request->start_date != null && $request->end_date != null) {
             $pembelian = PembelianSampah::whereDate('updated_at', '>=', $start_date)
-                ->whereDate('updated_at', '<=',  $end_date)
-                ->get();
+                ->whereDate('updated_at', '<=',  $end_date);
 
+                if ($status !== '' && $status !== 'Pilih') {
+                    $pembelian->where('status_pembelian', $status);
+                }
+                $pembelian = $pembelian->get();
             // Calculate the total pembayaran
             $total_pembayaran = $pembelian->sum('total');
             return view('admin.laporan-pembelian', compact('pembelian', 'total_pembayaran', 'start_date', 'end_date'));

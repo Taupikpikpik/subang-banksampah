@@ -17,44 +17,50 @@
         </div> --}}
         <div class="col-12 col-md-6 col-lg-3 d-flex flex-wrap">
             <div class="card detail-box1 details-box">
-                <div class="card-body">
-                    <div class="dash-contetnt">
-                        <div class="mb-3">
-                            <img src="assets/img/icons/visits.svg" alt="" width="26">
+                <a href="/admin/user">
+                    <div class="card-body">
+                        <div class="dash-contetnt">
+                            <div class="mb-3">
+                                <img src="assets/img/icons/visits.svg" alt="" width="26">
+                            </div>
+                            <h4 class="text-white">Total Nasabah</h4>
+                            <h2 class="text-white">{{ $nasabah }}</h2>
                         </div>
-                        <h4 class="text-white">Total Nasabah</h4>
-                        <h2 class="text-white">{{ $nasabah }}</h2>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3 d-flex flex-wrap">
             <div class="card detail-box3 details-box">
-                <div class="card-body">
-                    <div class="dash-contetnt">
-                        <div class="mb-3">
-                            <img src="assets/img/icons/hospital-bed.svg" alt="" width="26">
+                <a href="/admin/bank-sampah">
+                    <div class="card-body">
+                        <div class="dash-contetnt">
+                            <div class="mb-3">
+                                <img src="assets/img/icons/hospital-bed.svg" alt="" width="26">
+                            </div>
+                            <h4 class="text-white">Total Jenis Sampah</h4>
+                            <h2 class="text-white">{{ $sampah }}</h2>
                         </div>
-                        <h4 class="text-white">Total Jenis Sampah</h4>
-                        <h2 class="text-white">{{ $sampah }}</h2>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-3 d-flex flex-wrap">
             <div class="card detail-box4 details-box">
-                <div class="card-body">
-                    <div class="dash-contetnt">
-                        <div class="mb-3">
-                            <img src="assets/img/icons/operating.svg" alt="" width="26">
+                <a href="/admin/transaksi-sampah">
+                    <div class="card-body">
+                        <div class="dash-contetnt">
+                            <div class="mb-3">
+                                <img src="assets/img/icons/operating.svg" alt="" width="26">
+                            </div>
+                            <h4 class="text-white">Total Transaksi</h4>
+                            <h2 class="text-white">{{ $transaksi }}</h2>
                         </div>
-                        <h4 class="text-white">Total Transaksi</h4>
-                        <h2 class="text-white">{{ $transaksi }}</h2>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-3">
+        <div>
             <div class="card detail-box5 details-box">
                 <div class="card-body">
                     <div class="dash-contetnt">
@@ -65,15 +71,15 @@
                         <h4 class="text-white">Jadwal Hari Ini</h4>
                         @foreach ($jadwal as $data)
                             <h6 class="text-white">{{ $loop->iteration }}.
-                                {{ isset($data->penjualan) ? $data->penjualan->nasabah->name : '' }} |
-                                {{ isset($data->penjualan) ? $data->penjualan->nasabah->address : '' }} |
-                                {{ isset($data->penjualan) ? $data->penjualan->sampah->nama_sampah : '' }}</h6>
+                                {{ $data->penjualan->nasabah->name }} ||
+                                {{ $data->petugas->name }} ||
+                                {{ $data->status }}
+                            </h6>
                         @endforeach
                     </div>
                 </div>
+
             </div>
-        </div>
-        <div>
             <a href="#" class="btn btn-primary" onclick="bar2()">Lihat Chart</a>
         </div>
         <div id="barpeminjaman" class="col-12 col-md-4 col-lg-8">

@@ -23,7 +23,7 @@ class PembelianSampahController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -56,7 +56,7 @@ class PembelianSampahController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
                 if ($request->hasFile('bukti_pembayaran')) {
             $requestData['bukti_pembayaran'] = $request->file('bukti_pembayaran')
@@ -107,7 +107,7 @@ class PembelianSampahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $requestData = $request->all();
                 if ($request->hasFile('bukti_pembayaran')) {
             $requestData['bukti_pembayaran'] = $request->file('bukti_pembayaran')
@@ -143,9 +143,9 @@ class PembelianSampahController extends Controller
         $pembelian->save();
 
         $pembeliandetail = PembelianSampahDetail::where('id_pembelian_sampah',$id)->get();
-   
 
-        
+
+
 
         $saldo = Saldo::find(1);
         $saldo->jumlah_saldo += $pembelian->total;
@@ -165,8 +165,8 @@ class PembelianSampahController extends Controller
             'ket' => $request->input('ket'),
         ]);
 
-        $pembelian = PembelianSampahDetail::where('id_pembelian_sampah',$id)->get();
-        foreach ($pembelian as $value) {
+        $pembelianDetail = PembelianSampahDetail::where('id_pembelian_sampah',$id)->get();
+        foreach ($pembelianDetail as $value) {
             $sampah = BankSampah::find($value->id_sampah);
             $sampah->stok += $value->kuantitas;
             $sampah->save();

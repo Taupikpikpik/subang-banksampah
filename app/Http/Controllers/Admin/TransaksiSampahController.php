@@ -19,7 +19,7 @@ class TransaksiSampahController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +29,7 @@ class TransaksiSampahController extends Controller
     {
         $perPage = 25;
         $transaksisampah = TransaksiSampah::with('sampah')->latest()->paginate($perPage);
-     
+
         $data['transaksisampah'] = $transaksisampah;
         return view('admin.transaksi-sampah.index', $data);
     }
@@ -53,9 +53,9 @@ class TransaksiSampahController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
-        
+
         TransaksiSampah::create($requestData);
         alert()->success('New ' . 'TransaksiSampah'. ' Created!' );
 
@@ -100,9 +100,9 @@ class TransaksiSampahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $requestData = $request->all();
-        
+
         $transaksisampah = TransaksiSampah::findOrFail($id);
         alert()->success('Record Updated!' );
         $transaksisampah->update($requestData);

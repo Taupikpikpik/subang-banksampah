@@ -5,6 +5,7 @@
 <script src="{{ asset('vendor/dashboard') }}/assets/js/calander.js"></script>
 <script src="{{ asset('vendor/dashboard') }}/assets/js/script.js"></script>
 <script src="{{ asset('vendor/dashboard') }}/assets/js/select2.min.js"></script>
+<script src="{{ asset('vendor/dashboard') }}/assets/plugin/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.select-2').select2({
