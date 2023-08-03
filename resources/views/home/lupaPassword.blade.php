@@ -36,10 +36,10 @@
             <div class="col-12 mx-auto text-center">
                 <div class="row h-100">
                     <div class="col-10 col-sm-8 col-md-6 col-lg-4 col-xl-3 mx-auto align-self-center">
-                        <h2 class="text-center mb-4">Sign in</h2>
+                        <h2 class="text-center mb-4">Lupa Password</h2>
                         <div class="card card-light shadow-sm mb-4">
                             <div class="card-body">
-                                <form class="was-validated" method="post" action="{{ route('login.user') }}">
+                                <form class="was-validated" method="post" action="/lupa-password">
                                     {{ csrf_field() }}
                                     <div class="form-floating mb-3">
                                         <input type="email" class="form-control" id="emailaddress"
@@ -50,20 +50,10 @@
                                             <i class="bi bi-check-circle"></i>
                                         </button>
                                     </div>
-                                    <div class="form-floating mb-3">
-                                        <input type="password" class="form-control" id="password"
-                                            placeholder="Your Password" name="password" required>
-                                        <label for="password">Password</label>
-                                        <button type="button" class="btn btn-link tooltip-btn" data-bs-toggle="tooltip"
-                                            data-bs-placement="left" title="Enter valid password">
-                                            <i class="bi bi-exclamation-circle"></i>
-                                        </button>
-                                    </div>
                                     <div class="d-grid"><button type="submit"
-                                            class="btn btn-lg btn-default shadow-sm">Sign
-                                            in</button></div>
+                                            class="btn btn-lg btn-default shadow-sm">Send</button></div>
                                     <div class="d-grid">
-                                        <a href="/lupa-password">Lupa Password</a>
+                                        <a href="/pengepul">Login</a>
                                     </div>
                                 </form>
 

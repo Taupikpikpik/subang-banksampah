@@ -20,7 +20,7 @@ class UserController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -33,7 +33,8 @@ class UserController extends Controller
         return view('admin.user.index', $data);
     }
 
-    public function create() {
+    public function create()
+    {
         return view('admin.user.create');
     }
     /**
@@ -45,21 +46,63 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
+        $request->validate([
+            'email' => 'email|unique:users|required|min:8',
+            'nomorHp' => 'unique:users|required|min:6',
+            'nik' => 'unique:users|required|min:16|max:16',
+            'password' => 'required|min:5',
+        ]);
+
         $existingUser = User::where('email', $request->email)->first();
-        if($existingUser) {
-            alert()->error('User with this email is already exisit');
+        if ($existingUser) {
+            alert()->error('Email Sudah terdaftar');
             return redirect()->back();
         }
+
+        $existingnomorHp = User::where('nomorHp', $request->nomorHp)->first();
+        if ($existingnomorHp) {
+            alert()->error('nomor HP Sudah terdaftar');
+            return redirect()->back();
+        }
+
+        $existingnik = User::where('nik', $request->nik)->first();
+
+        if ($existingnik) {
+            alert()->error('NIK Sudah terdaftar');
+            return redirect()->back();
+        }
+
         $requestData = $request->all();
         $requestData['password'] = bcrypt($request->password);
-        if($request->has('password')) {
+        if ($request->has('password')) {
             $requestData['password'] = bcrypt($request->password);
+        }
+
+        if ($request->role !== 'reviewer') {
+            $requestData['jabatan'] = '';
+        }
+
+        if ($request->role === 'nasabah') {
+
+            $maxid = (int)User::max('id') + 1;
+
+
+
+            $notabungan = $maxid .  substr($request->nik, -4) . date('d');
+
+
+            $requestData['noTabungan'] = $notabungan;
+            $requestData['kelurahan'] = $request->kelurahan;
+        } else {
+            $requestData['noTabungan'] = null;
+            $requestData['kelurahan'] = null;
         }
 
         $user = User::create($requestData);
         alert()->success('New User Created!');
 
-        if($request->role == 'nasabah') {
+        if ($request->role == 'nasabah') {
             $wallet = new Saldo;
             $wallet->jumlah_saldo = 0;
             $wallet->id_user = $user->id;
@@ -71,6 +114,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
+
         $data['user'] = $user;
         return view('admin.user.edit', $data);
     }
@@ -84,24 +128,55 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $existingUser = User::where('email', $request->email)->first();
         $currentUser = User::find($id);
-        if($currentUser->email === $request->email) {
-            $requestData = $request->all();
-            if($request->password != null) {
-                $requestData['password'] = bcrypt($request->password);
-            }
-            $user = User::findOrFail($id);
-            alert()->success('Record Updated!');
-            unset($requestData['password']);
-            $user->update($requestData);
 
-            return redirect('admin/user');
+        if ($currentUser->email !== $request->email) {
+
+            $existingUser = User::where('email', $request->email)
+                ->whereRaw('email <> ?', $currentUser->email)->first();
+
+
+            if ($existingUser) {
+                alert()->error('User with this email is already exisit');
+                return redirect()->back();
             }
-        if($existingUser) {
-            alert()->error('User with this email is already exisit');
-            return redirect()->back();
         }
+
+        if ($currentUser->nomorHp !== $request->nomorHp) {
+
+            $existingnomorHp = User::where('nomorHp', $request->nomorHp)
+                ->whereRaw('nomorHp <> ?', $currentUser->nomorHp)->first();
+
+
+            if ($existingnomorHp) {
+                alert()->error('User with this nomorHp is already exisit');
+                return redirect()->back();
+            }
+        }
+
+        if ($currentUser->nik !== $request->nik) {
+
+            $existingnik = User::where('nik', $request->nik)
+                ->whereRaw('nik <> ?', $currentUser->nik)->first();
+
+
+            if ($existingnik) {
+                alert()->error('User with this NIK is already exisit');
+                return redirect()->back();
+            }
+        }
+
+
+        $requestData = $request->all();
+        if ($request->password != null) {
+            $requestData['password'] = bcrypt($request->password);
+        }
+        $user = User::findOrFail($id);
+        alert()->success('Record Updated!');
+        unset($requestData['password']);
+        $user->update($requestData);
+
+        return redirect('admin/user');
     }
 
     /**
@@ -113,9 +188,15 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        alert()->success('Record Deleted!' );
+        alert()->success('Record Deleted!');
         User::destroy($id);
 
         return redirect('admin/user');
+    }
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+
+        return view('admin.user.show', compact('user'));
     }
 }

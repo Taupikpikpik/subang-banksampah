@@ -62,11 +62,11 @@
         accept="image/*"{{ '' == 'required' ? ' required' : '' }}>
     {!! $errors->first('icon', '<p class="help-block">:message</p>') !!}
 </div>
-
-<div class="form-group" align="left">
-    <img src="{{ asset('uploads/images') . '/' . $banksampah->icon }}" style="width:25%;">
-</div>
-
+@if ($formMode == 'edit')
+    <div class="form-group" align="left">
+        <img src="{{ asset('uploads/images') . '/' . $banksampah->icon }}" style="width:25%;">
+    </div>
+@endif
 <div class="form-group" align="right">
     {!! Form::submit($formMode === 'edit' ? 'Ubah' : 'Buat', ['class' => 'btn btn-primary']) !!}
     {!! Form::reset('Reset', ['class' => 'btn btn-warning']) !!}

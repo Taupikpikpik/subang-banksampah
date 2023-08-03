@@ -16,8 +16,11 @@ use App\Models\TransaksiSampah;
 use App\Models\Saldo;
 use App\Models\PenarikanSaldo;
 use Alert;
+use App\Mail\kirimEmail;
 use Illuminate\Http\Request;
 use DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -30,11 +33,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if(Auth::id() == null) {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['saldo'] = Saldo::where('id_user', Auth::id())->first();
-        $data['penjualan'] = DB::table('penjualan_sampah_details')->selectRaw('sum(kuantitas) as kuantitas')->join('penjualan_sampahs','penjualan_sampahs.id','=','penjualan_sampah_details.id_penjualan_sampah')->where('status_penjualan', 'Penjualan Berhasil')->where('id_nasabah', Auth::id())->first()->kuantitas;
+        $data['penjualan'] = DB::table('penjualan_sampah_details')->selectRaw('sum(kuantitas) as kuantitas')->join('penjualan_sampahs', 'penjualan_sampahs.id', '=', 'penjualan_sampah_details.id_penjualan_sampah')->where('status_penjualan', 'Penjualan Berhasil')->where('id_nasabah', Auth::id())->first()->kuantitas;
         $data['kategori'] = KategoriSampah::get();
         $data['bank'] = BankSampah::get();
         return view('home.index', $data);
@@ -42,7 +45,7 @@ class HomeController extends Controller
 
     public function indexPetugas()
     {
-        if(Auth::id() == null) {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['jadwal'] = JadwalPengambilan::where('id_petugas', Auth::id())->count('id');
@@ -53,34 +56,36 @@ class HomeController extends Controller
 
     public function indexPengepul()
     {
-        if(Auth::id() == null) {
+        if (Auth::id() == null) {
             return view('home.login');
         }
-        $data['pembelian'] = DB::table('pembelian_sampah_details')->selectRaw('sum(kuantitas) as kuantitas')->join('pembelian_sampahs','pembelian_sampahs.id','=','pembelian_sampah_details.id_pembelian_sampah')->where('status_pembelian', 'Pembelian Berhasil')->where('id_pengepul', Auth::id())->first()->kuantitas;
+        $data['pembelian'] = DB::table('pembelian_sampah_details')->selectRaw('sum(kuantitas) as kuantitas')->join('pembelian_sampahs', 'pembelian_sampahs.id', '=', 'pembelian_sampah_details.id_pembelian_sampah')->where('status_pembelian', 'Pembelian Berhasil')->where('id_pengepul', Auth::id())->first()->kuantitas;
         $data['kategori'] = KategoriSampah::get();
         $data['sampah'] = BankSampah::where('status_sampah', "active")->get();
         return view('home.index-pengepul', $data);
     }
 
-    public function purchase() {
-        if(Auth::id() == null) {
+    public function purchase()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['pembelian'] = PembelianSampah::with('detail')->where('id_pengepul', Auth::id())->get();
 
-		return view('home.purchase', $data);
-	}
+        return view('home.purchase', $data);
+    }
 
     public function detailPembelian($id)
     {
-        $sampah = PembelianSampahDetail::with('sampah')->with('pembelian_sampah')->where('id_pembelian_sampah',$id)->get();
+        $sampah = PembelianSampahDetail::with('sampah')->with('pembelian_sampah')->where('id_pembelian_sampah', $id)->get();
 
         return response()->json([
             'data' => $sampah
         ]);
     }
 
-    public function storePurchase(Request $request) {
+    public function storePurchase(Request $request)
+    {
 
         $code = chr(rand(65, 90)); // Uppercase letter (A-Z)
         $code .= rand(10, 99); // Two random numbers (10-99)
@@ -94,12 +99,12 @@ class HomeController extends Controller
             'kode_pembelian' => $code,
         ]);
 
-        foreach($request->id_sampah as $key => $value){
+        foreach ($request->id_sampah as $key => $value) {
             $sampah = BankSampah::find($request->id_sampah[$key]);
             $data_detail[] = [
                 'id_sampah' => $request->id_sampah[$key],
                 'kuantitas' => $request->kuantitas[$key],
-                'total' => $sampah->harga_jual*$request->kuantitas[$key],
+                'total' => $sampah->harga_jual * $request->kuantitas[$key],
                 'id_pembelian_sampah' => $insert_sampah->id,
             ];
             $sampah = BankSampah::find($request->id_sampah[$key]);
@@ -107,7 +112,7 @@ class HomeController extends Controller
             $sampah->save();
         }
 
-      $detail =  PembelianSampahDetail::insert($data_detail);
+        $detail =  PembelianSampahDetail::insert($data_detail);
 
         $transaksi = new TransaksiSampah;
         $transaksi->id_sampah = '';
@@ -121,16 +126,18 @@ class HomeController extends Controller
         return redirect('pengepul');
     }
 
-    public function profile() {
-        if(Auth::id() == null) {
+    public function profile()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
-		return view('home.profile');
-	}
+        return view('home.profile');
+    }
 
-    public function profileUpdate(Request $request) {
+    public function profileUpdate($id, Request $request)
+    {
         $requestData = $request->all();
-        if($request->password != null) {
+        if ($request->password != null) {
             $requestData['password'] = bcrypt($request->password);
         }
         $user = User::findOrFail($id);
@@ -139,27 +146,30 @@ class HomeController extends Controller
         alert()->success('Profil Berhasil Diperbaharui');
 
         return redirect('profile');
-	}
+    }
 
-    public function withdraw() {
-        if(Auth::id() == null) {
+    public function withdraw()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['withdraw'] = PenarikanSaldo::where('id_nasabah', Auth::id())->get();
         $limit['wd'] = PenarikanSaldo::where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
-		return view('home.withdraw', $data, $limit);
-	}
+        return view('home.withdraw', $data, $limit);
+    }
 
-    public function createWithdraw() {
-        if(Auth::id() == null) {
+    public function createWithdraw()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['saldo'] = Saldo::where('id_user', Auth::id())->first();
 
-		return view('home.create-withdraw', $data);
-	}
+        return view('home.create-withdraw', $data);
+    }
 
-    public function storeWithdraw(Request $request) {
+    public function storeWithdraw(Request $request)
+    {
         $code = chr(rand(65, 90)); // Uppercase letter (A-Z)
         $code .= rand(10, 99); // Two random numbers (10-99)
         $code .= chr(rand(65, 90)) . chr(rand(65, 90)) . chr(rand(65, 90)); // Three uppercase letters (A-Z)
@@ -175,43 +185,49 @@ class HomeController extends Controller
         alert()->success('Request Penarikan Berhasil');
         return redirect('/');
     }
-    public function sell() {
-        if(Auth::id() == null) {
+    public function sell()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['penjualan'] = PenjualanSampah::where('id_nasabah', Auth::id())->get();
-        $limit['penjualans'] = PenjualanSampah::where('id_nasabah', Auth::id())->where('status_penjualan', "Menunggu Konfirmasi Admin")->orWhere('status_penjualan', "Menunggu Kedatangan Petugas")->exists();
-		return view('home.sell', $data, $limit);
-	}
+        $limit['penjualans'] = PenjualanSampah::where('id_nasabah', Auth::id())->where(function ($query) {
+            $query->where('status_penjualan', 'Menunggu Konfirmasi Admin')
+                ->orWhere('status_penjualan', 'Menunggu Kedatangan Petugas');
+        })->exists();
+
+        return view('home.sell', $data, $limit);
+    }
 
     public function detailPenjualan($id)
     {
-        $sampah = PenjualanSampahDetail::with('sampah')->with('penjualan_sampah')->where('id_penjualan_sampah',$id)->get();
+        $sampah = PenjualanSampahDetail::with('sampah')->with('penjualan_sampah')->where('id_penjualan_sampah', $id)->get();
 
         return response()->json([
             'data' => $sampah
         ]);
     }
 
-    public function jadwalNasabah() {
-        $data['jadwal'] = JadwalPengambilan::with('petugas')->
-        join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
-        ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
-        ->where('penjualan_sampahs.id_nasabah', Auth::id())->get();
-		return view('home.jadwal-nasabah', $data);
-	}
+    public function jadwalNasabah()
+    {
+        $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
+            ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
+            ->where('penjualan_sampahs.id_nasabah', Auth::id())->get();
+        return view('home.jadwal-nasabah', $data);
+    }
 
-    public function jadwalPetugas() {
-        $data['jadwal'] = JadwalPengambilan::with('petugas')->
-        join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
-        ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
-        ->where('jadwal_pengambilan.id_petugas', Auth::id())->get();
+    public function jadwalPetugas()
+    {
+        $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
+            ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
+            ->where('jadwal_pengambilan.id_petugas', Auth::id())->get();
 
         $data['detail'] = PenjualanSampahDetail::all();
-		return view('home.jadwal-petugas', $data);
-	}
+        return view('home.jadwal-petugas', $data);
+    }
 
-    public function petugasApprove($id) {
+    public function petugasApprove($id)
+    {
         $jadwal = JadwalPengambilan::find($id);
         $jadwal->status = 'Sampah Telah Diambil';
         $jadwal->save();
@@ -239,7 +255,7 @@ class HomeController extends Controller
         $saldoAdmin->jumlah_saldo -= $penjualan->total;
         $saldoAdmin->save();
 
-        $saldoNasabah = Saldo::where('id_user',$penjualan->id_nasabah)->first();
+        $saldoNasabah = Saldo::where('id_user', $penjualan->id_nasabah)->first();
         $saldoNasabah->jumlah_saldo += $total_penjualan;
         $saldoNasabah->save();
 
@@ -248,32 +264,38 @@ class HomeController extends Controller
         return redirect('/petugas');
     }
 
-    public function createSell() {
-        if(Auth::id() == null) {
+    public function createSell()
+    {
+        if (Auth::id() == null) {
             return view('home.login');
         }
         $data['sampah'] = BankSampah::where('status_sampah', "active")->get();
 
-		return view('home.create-sell', $data);
-	}
 
-    public function storeSell(Request $request) {
+        $data['kategori'] = BankSampah::with('kategori')->where('status_sampah', "active")->groupBy('id_kategori_sampah')->get();
+
+
+        return view('home.create-sell', $data);
+    }
+
+    public function storeSell(Request $request)
+    {
         $data_detail = [];
-        $getData = PenjualanSampah::where('status_penjualan','Menunggu Konfirmasi Admin')->where('id_nasabah', Auth::id())->count();
+        $getData = PenjualanSampah::where('status_penjualan', 'Menunggu Konfirmasi Admin')->where('id_nasabah', Auth::id())->count();
 
-        if($getData > 0){
+        if ($getData > 0) {
             alert()->error('Ada request penjualan yang belum diproses');
             return redirect('/sell/create');
         }
 
+        // dd($request);
         $insert_sampah = PenjualanSampah::create([
             'id_nasabah' => Auth::id(),
             'status_penjualan' => 'Menunggu Konfirmasi Admin',
         ]);
-
-        foreach($request->id_sampah as $key => $value){
+        foreach ($request->sampah as $key => $value) {
             $data_detail[] = [
-                'id_sampah' => $request->id_sampah[$key],
+                'id_sampah' => $request->sampah[$key],
                 'kuantitas' => $request->kuantitas[$key],
                 'total' => $request->total[$key],
                 'id_penjualan_sampah' => $insert_sampah->id,
@@ -302,38 +324,60 @@ class HomeController extends Controller
             'harga_beli' => $sampah->harga_beli
         ]);
     }
-    public function registerPage() {
-		return view('home.register');
-	}
 
-	public function userRegisterSubmit(Request $request) {
-		$existingUser = User::where('email', $request->email)->first();
-		if($existingUser) {
-			alert()->error('Account already exist');
-			return redirect()->back();
-		} else {
-			$user = new User;
-			$user->name = $request->name;
-			$user->email = $request->email;
-			$user->role = 'nasabah';
-			$user->password = bcrypt($request->password);
-			$user->save();
+    public function getDataSampah($id)
+    {
+        $sampah = BankSampah::where('id_kategori_sampah', $id)->get();
+
+        $datasampah = [];
+        if ($sampah) {
+            foreach ($sampah as $s) {
+
+                $data_sampah[] = [
+                    'id' => $s->id,
+                    'nama_sampah' => $s->nama_sampah,
+                ];
+            }
+        }
+        return response()->json($data_sampah);
+    }
+
+    public function registerPage()
+    {
+        return view('home.register');
+    }
+
+    public function userRegisterSubmit(Request $request)
+    {
+        $existingUser = User::where('email', $request->email)->first();
+        if ($existingUser) {
+            alert()->error('Account already exist');
+            return redirect()->back();
+        } else {
+            $user = new User;
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->role = 'nasabah';
+            $user->password = bcrypt($request->password);
+            $user->save();
 
             $wallet = new Saldo;
             $wallet->jumlah_saldo = 0;
             $wallet->id_user = $user->id;
             $wallet->save();
-			alert()->success('Account Created Successfuly');
-			return redirect('user-login');
-		}
-	}
+            alert()->success('Account Created Successfuly');
+            return redirect('user-login');
+        }
+    }
 
-    public function loginPage() {
-		return view('home.login');
-	}
+    public function loginPage()
+    {
+        return view('home.login');
+    }
 
-	public function userLogin(Request $request) {
-		$request->validate([
+    public function userLogin(Request $request)
+    {
+        $request->validate([
             'email' => 'required',
             'password' => 'required',
 
@@ -342,7 +386,7 @@ class HomeController extends Controller
         $credentials = $request->only('email', 'password');
         $user = User::where('email', $email)->first();
 
-        if($user->status == 'deactive') {
+        if ($user->status == 'deactive') {
             alert()->error('Akun anda berstatus non-aktif');
             return redirect('/');
         }
@@ -351,42 +395,100 @@ class HomeController extends Controller
             session(["role" => $user->role]);
             // alert()->success('Login Success');
             return redirect('/');
-        }
-        else if (auth()->guard('web')->attempt($credentials) && $user->role == 'pengepul') {
+        } else if (auth()->guard('web')->attempt($credentials) && $user->role == 'pengepul') {
             session(["email" => $email]);
             session(["role" => $user->role]);
             // alert()->success('Login Success');
             return redirect('/pengepul');
-
         } else if (auth()->guard('web')->attempt($credentials) && $user->role == 'petugas') {
             session(["email" => $email]);
             session(["role" => $user->role]);
             // alert()->success('Login Success');
             return redirect('/petugas');
-
         } else if (auth()->guard('web')->attempt($credentials) && $user->role == 'admin') {
             session(["email" => $email]);
             session(["role" => $user->role]);
             alert()->success('Login Success');
             return redirect('/admin');
-
         } else if (auth()->guard('web')->attempt($credentials) && $user->role == 'reviewer') {
             session(["email" => $email]);
             session(["role" => $user->role]);
             alert()->success('Login Success');
             return redirect('/reviewer');
-
         } else {
-            alert()->error('Wrong email or password!' );
+            alert()->error('Wrong email or password!');
             return redirect('/user-login');
         }
-	}
+    }
 
-	public function userLogout() {
+    public function userLogout()
+    {
         session()->flush();
         Auth::logout();
         return redirect('/user-login');
     }
 
+    public function lupaPassword()
+    {
+        return view('home.lupaPassword');
+    }
 
+    public function prosesLupaPassword()
+    {
+        $email = Request()->email;
+
+        $data = DB::table('users')->where('email', $email)->first();
+
+        if ($data) {
+
+            $data_email = [
+                'subject'       => 'Lupa Password',
+                'sender_name'   => 'boomichael34@gmail.com',
+                'urlUtama'      => 'http://127.0.0.1:8000',
+                'tipe'          => 'Lupa Password',
+                'urlReset'      => 'http://127.0.0.1:8000/reset_password/' . $data->id,
+                'dataUser'      => $data,
+            ];
+
+            Mail::to($data->email)->send(new kirimEmail($data_email));
+            alert()->success('Cek Email Anda');
+            return redirect('/pengepul');
+        } else {
+            alert()->error('Gagal Kirim Email');
+            return back();
+        }
+    }
+
+    public function resetPassword($id)
+    {
+
+        $data = [
+            'user' => DB::table('users')->where('id', $id)->first()
+        ];
+
+        return view('home.resetPassword', $data);
+    }
+
+    public function prosesResetPassword($id)
+    {
+        Request()->validate([
+            'password' => 'min:6|required|confirmed',
+            'password_confirmation' => 'min:6|required',
+        ], [
+            'password.required'    => 'Password baru harus diisi!',
+            'password.min'         => 'Password baru minimal 6 karakter!',
+            'password.confirmed'   => 'Password baru tidak sama!',
+            'password_confirmation.required'    => 'Konfimrasi Password harus diisi!',
+            'password_confirmation.min'         => 'Konfimrasi Password minimal 6 karakter!',
+        ]);
+
+        $data = [
+            'id'       => $id,
+            'password' => Hash::make(Request()->password)
+        ];
+
+        DB::table('users')->where('id', $id)->update($data);
+        alert()->success('Silahkan login');
+        return redirect('/pengepul');
+    }
 }

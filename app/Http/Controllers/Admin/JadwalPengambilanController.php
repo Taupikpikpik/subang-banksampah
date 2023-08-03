@@ -20,14 +20,14 @@ class JadwalPengambilanController extends Controller
      * @return void
      */
 
-     private $penjualanSampah;
+    private $penjualanSampah;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->PenjualanSampah = new PenjualanSampah();
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -49,9 +49,9 @@ class JadwalPengambilanController extends Controller
     public function create()
     {
         // $data['penjualan'] = PenjualanSampah::where('status_penjualan', 'Menunggu Konfirmasi Admin')->pluck('id','id');
-        $data['penjualan'] = PenjualanSampah::with('nasabah')->where('status_penjualan','Menunggu Konfirmasi Admin')->groupBy('id_nasabah')->get();
-        $data['petugas'] = User::where('role', 'petugas')->pluck('name','id');
-        
+        $data['penjualan'] = PenjualanSampah::with('nasabah')->where('status_penjualan', 'Menunggu Konfirmasi Admin')->groupBy('id_nasabah')->get();
+        $data['petugas'] = User::where('role', 'petugas')->pluck('name', 'id');
+
         return view('admin.jadwal-pengambilan.create', $data);
     }
 
@@ -71,17 +71,21 @@ class JadwalPengambilanController extends Controller
         if ($jadwal < $now) {
             alert()->error('New JadwalPengambilan Error!');
         } else {
-            $requestData['status'] = 'Jadwal Telah Dibuat';
+
+            for ($i = 0; $i < count($requestData['id_penjualan']); $i++) {
+                $requestData['status'] = 'Jadwal Telah Dibuat';
                 $jadwalPengambilan = new JadwalPengambilan();
-                $jadwalPengambilan->id_penjualan = $requestData['id_penjualan'];
+
+                $jadwalPengambilan->id_penjualan = $requestData['id_penjualan'][$i];
                 $jadwalPengambilan->id_petugas = $requestData['id_petugas'];
                 $jadwalPengambilan->tanggal = $requestData['tanggal'];
                 $jadwalPengambilan->status = $requestData['status'];
                 $jadwalPengambilan->save();
 
-                $penjualanSampah = PenjualanSampah::find($requestData['id_penjualan']);
+                $penjualanSampah = PenjualanSampah::find($requestData['id_penjualan'][$i]);
                 $penjualanSampah->status_penjualan = 'Menunggu Kedatangan Petugas';
                 $penjualanSampah->save();
+            }
 
             alert()->success('New JadwalPengambilan Created!');
         }
@@ -116,8 +120,8 @@ class JadwalPengambilanController extends Controller
     {
         $jadwalpengambilan = JadwalPengambilan::findOrFail($id);
         $data['jadwalpengambilan'] = $jadwalpengambilan;
-        $data['penjualan'] = PenjualanSampah::where('status_penjualan', 'Menunggu Konfirmasi Admin')->pluck('id','id');
-        $data['petugas'] = User::where('role', 'petugas')->pluck('name','id');
+        $data['penjualan'] = PenjualanSampah::where('status_penjualan', 'Menunggu Konfirmasi Admin')->pluck('id', 'id');
+        $data['petugas'] = User::where('role', 'petugas')->pluck('name', 'id');
         return view('admin.jadwal-pengambilan.edit', $data);
     }
 
@@ -131,11 +135,11 @@ class JadwalPengambilanController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $requestData = $request->all();
-        
+
         $jadwalpengambilan = JadwalPengambilan::findOrFail($id);
-        alert()->success('Record Updated!' );
+        alert()->success('Record Updated!');
         $jadwalpengambilan->update($requestData);
 
         return redirect('admin/jadwal-pengambilan');
@@ -150,7 +154,7 @@ class JadwalPengambilanController extends Controller
      */
     public function destroy($id)
     {
-        alert()->success('Record Deleted!' );
+        alert()->success('Record Deleted!');
         JadwalPengambilan::destroy($id);
 
         return redirect('admin/jadwal-pengambilan');

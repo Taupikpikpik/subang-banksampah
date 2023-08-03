@@ -36,34 +36,32 @@
             <div class="col-12 mx-auto text-center">
                 <div class="row h-100">
                     <div class="col-10 col-sm-8 col-md-6 col-lg-4 col-xl-3 mx-auto align-self-center">
-                        <h2 class="text-center mb-4">Sign in</h2>
+                        <h2 class="text-center mb-4">Reset Password</h2>
                         <div class="card card-light shadow-sm mb-4">
                             <div class="card-body">
-                                <form class="was-validated" method="post" action="{{ route('login.user') }}">
+                                <form class="was-validated" method="post" action="/reset_password/{{ $user->id }}">
                                     {{ csrf_field() }}
-                                    <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="emailaddress"
-                                            placeholder="name@example.com" name="email" required>
-                                        <label for="emailaddress">Email</label>
-                                        <button type="button" class="btn btn-link tooltip-btn" data-bs-toggle="tooltip"
-                                            data-bs-placement="left" title="Email is valid">
-                                            <i class="bi bi-check-circle"></i>
-                                        </button>
-                                    </div>
                                     <div class="form-floating mb-3">
                                         <input type="password" class="form-control" id="password"
                                             placeholder="Your Password" name="password" required>
-                                        <label for="password">Password</label>
+                                        <label for="password">Password Baru</label>
+                                        <button type="button" class="btn btn-link tooltip-btn" data-bs-toggle="tooltip"
+                                            data-bs-placement="left" title="Enter valid password">
+                                            <i class="bi bi-exclamation-circle"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="password_confirmation"
+                                            placeholder="Your Confirm Password" name="password_confirmation" required>
+                                        <label for="password">Confirm Password</label>
                                         <button type="button" class="btn btn-link tooltip-btn" data-bs-toggle="tooltip"
                                             data-bs-placement="left" title="Enter valid password">
                                             <i class="bi bi-exclamation-circle"></i>
                                         </button>
                                     </div>
                                     <div class="d-grid"><button type="submit"
-                                            class="btn btn-lg btn-default shadow-sm">Sign
-                                            in</button></div>
+                                            class="btn btn-lg btn-default shadow-sm">Reset</button></div>
                                     <div class="d-grid">
-                                        <a href="/lupa-password">Lupa Password</a>
                                     </div>
                                 </form>
 

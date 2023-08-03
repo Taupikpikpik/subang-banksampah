@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Alert;
 use App\Models\KategoriSampah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class KategoriSampahController extends Controller
 {
@@ -19,7 +20,7 @@ class KategoriSampahController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -52,16 +53,20 @@ class KategoriSampahController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
         if ($request->hasFile('icon')) {
-            $icon = $request->file('icon');
-            $nama_icon = $request->file('icon')->getClientOriginalName();
-            $icon->move('uploads/images', $nama_icon);
+            $image = $request->file('icon');
+            $originalFileName = $image->getClientOriginalName();
+            $encryptedFileName = Crypt::encryptString(pathinfo($originalFileName, PATHINFO_FILENAME));
+            $limitedEncryptedFileName = substr($encryptedFileName, 0, 15);
+
+            $nama_icon = $limitedEncryptedFileName . '.' . $image->getClientOriginalExtension();
+            $image->move('uploads/images', $nama_icon);
             $requestData['icon'] = $nama_icon;
         }
         KategoriSampah::create($requestData);
-        alert()->success('New ' . 'KategoriSampah'. ' Created!' );
+        alert()->success('New ' . 'kategori' . ' Created!');
 
         return redirect('admin/kategori-sampah');
     }
@@ -104,11 +109,22 @@ class KategoriSampahController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $requestData = $request->all();
-        
         $kategorisampah = KategoriSampah::findOrFail($id);
-        alert()->success('Record Updated!' );
+
+        if ($request->hasFile('icon')) {
+
+            $image = $request->file('icon');
+            $originalFileName = $image->getClientOriginalName();
+            $encryptedFileName = Crypt::encryptString(pathinfo($originalFileName, PATHINFO_FILENAME));
+            $limitedEncryptedFileName = substr($encryptedFileName, 0, 15);
+
+            $nama_icon = $limitedEncryptedFileName . '.' . $image->getClientOriginalExtension();
+            $image->move('uploads/images', $nama_icon);
+            $requestData['icon'] = $nama_icon;
+        }
+        alert()->success('Record Updated!');
         $kategorisampah->update($requestData);
 
         return redirect('admin/kategori-sampah');
@@ -123,7 +139,7 @@ class KategoriSampahController extends Controller
      */
     public function destroy($id)
     {
-        alert()->success('Record Deleted!' );
+        alert()->success('Record Deleted!');
         KategoriSampah::destroy($id);
 
         return redirect('admin/kategori-sampah');

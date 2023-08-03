@@ -28,7 +28,7 @@
         <header class="container-fluid header">
             <div class="row h-100">
                 <div class="col-auto align-self-center">
-                    <a href="{{url('/')}}" class="btn btn-link back-btn text-color-theme">
+                    <a href="{{ url('/') }}" class="btn btn-link back-btn text-color-theme">
                         <i class="bi bi-arrow-left size-20"></i>
                     </a>
                 </div>
@@ -62,7 +62,7 @@
                                             </figure> --}}
                                         </div>
                                         <div class="col align-self-center">
-                                            <h5 class="mb-0">{{Auth::user()->name}}</h5>
+                                            <h5 class="mb-0">{{ Auth::user()->name }}</h5>
                                         </div>
                                     </div>
                                 </div>
@@ -75,10 +75,11 @@
                 <div class="col-12 col-md-6 col-lg-4 mx-auto">
                     <div class="card card-light shadow-sm mb-4">
                         <div class="card-body">
-                            <form method="post" action="{{url('profile/update')}}">
+                            <form method="post" action="{{ url('profile/update/' . Auth::user()->id) }}">
                                 {{ csrf_field() }}
                                 <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="email" name="email" readonly value="{{Auth::user()->email}}">
+                                    <input type="email" class="form-control" id="email" name="email" readonly
+                                        value="{{ Auth::user()->email }}">
                                     <label for="city">Email</label>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -86,14 +87,17 @@
                                     <label for="city">Password</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="name" name="name" value="{{Auth::user()->name}}">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ Auth::user()->name }}">
                                     <label for="city">Nama</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="address" name="address" value="{{Auth::user()->address}}">
+                                    <input type="text" class="form-control" id="address" name="address"
+                                        value="{{ Auth::user()->address }}">
                                     <label for="city">Alamat</label>
                                 </div>
-                                <div class="d-grid"><button type="submit" class="btn btn-lg btn-default shadow-sm" id="submitButton">Update Profile</button></div>
+                                <div class="d-grid"><button type="submit" class="btn btn-lg btn-default shadow-sm"
+                                        id="submitButton">Update Profile</button></div>
                             </form>
                         </div>
                     </div>

@@ -3,6 +3,12 @@
 
 @include('home.partials.head')
 
+@php
+
+    use App\Models\PenjualanSampahDetail;
+
+@endphp
+
 <body class="body-scroll" data-page="">
 
     <!-- loader section -->
@@ -27,7 +33,7 @@
         <header class="container-fluid header">
             <div class="row h-100">
                 <div class="col-auto align-self-center">
-                    <a href="{{url('/')}}" class="btn btn-link back-btn text-color-theme">
+                    <a href="{{ url('/') }}" class="btn btn-link back-btn text-color-theme">
                         <i class="bi bi-arrow-left size-20"></i>
                     </a>
                 </div>
@@ -35,7 +41,7 @@
                     <h5 class="mb-0">Daftar Jadwal Pengambilan</h5>
                 </div>
                 <div class="col-auto align-self-center">
-                    <a href="{{url('/sell/create')}}" class="link text-color-theme">
+                    <a href="{{ url('/sell/create') }}" class="link text-color-theme">
                         {{-- <i class="bi bi-plus"></i> --}}
                     </a>
                 </div>
@@ -47,33 +53,42 @@
         <div class="main-container container">
 
             <div class="row mb-2">
-                @foreach($jadwal as $item)
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card shadow-sm product mb-3">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col ps-0 align-self-center">
-                                    <p class="mb-0">
-                                        <small class="text-opac">ID Penjualan : {{$item->id}}</small>
-                                    </p>
-                                    <h6 class="text-color-theme">Petugas : {{$item->petugas->name}}</h6>
-                                    <h6 class="text-color-theme">Sampah : {{$item->penjualan->sampah->nama_sampah}}</h6>
-                                    <h6 class="text-color-theme">Kuantitas : {{$item->penjualan->kuantitas}}</h6>
-                                    <h6 class="text-color-theme">Tanggal : {{$item->tanggal}}</h6>
-                                    <div class="row">
-                                        <div class="col">
-                                            @if($item->status == 'Sampah Telah Diambil')
-                                            <p class="text-primary">Status : {{$item->status}}</p>
-                                            @else
-                                            <p class="text-primary">Status : Menunggu Pembuatan Jadwal</p>
-                                            @endif
+                @foreach ($jadwal as $item)
+                    @php
+
+                        $detailpen = PenjualanSampahDetail::with('sampah')
+                            ->with('penjualan_sampah')
+                            ->where('id_penjualan_sampah', $item->id)
+                            ->first();
+                    @endphp
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card shadow-sm product mb-3">
+                            <div class="card-body">
+                                <div class="row p-3">
+                                    <div class="col ps-0 align-self-center">
+                                        <p class="mb-0">
+                                            <small class="text-opac">ID Penjualan : {{ $item->id }}</small>
+                                        </p>
+                                        <h6 class="text-color-theme">Petugas : {{ $item->petugas->name }}</h6>
+                                        <h6 class="text-color-theme">Sampah :
+                                            {{ $detailpen->sampah->nama_sampah }}</h6>
+                                        <h6 class="text-color-theme">Kuantitas : {{ $detailpen->kuantitas }}Kg
+                                        </h6>
+                                        <h6 class="text-color-theme">Tanggal : {{ $item->tanggal }}</h6>
+                                        <div class="row">
+                                            <div class="col">
+                                                @if ($item->status == 'Sampah Telah Diambil')
+                                                    <p class="text-primary">Status : {{ $item->status }}</p>
+                                                @else
+                                                    <p class="text-primary">Status : Menunggu Pembuatan Jadwal</p>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
 

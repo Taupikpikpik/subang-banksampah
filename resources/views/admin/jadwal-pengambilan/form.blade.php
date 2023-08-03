@@ -19,11 +19,12 @@
 </div>
 <div class="form-group{{ $errors->has('tanggal') ? 'has-error' : '' }}">
     {!! Form::label('tanggal', 'Tanggal', ['class' => 'control-label']) !!}
-    {!! Form::date(
+    <input type="datetime-local" name="tanggal" class="form-control" required>
+    {{-- {!! Form::date(
         'tanggal',
         null,
         '' == 'required' ? ['class' => 'form-control', 'required' => 'required'] : ['class' => 'form-control'],
-    ) !!}
+    ) !!} --}}
     {!! $errors->first('tanggal', '<p class="help-block">:message</p>') !!}
 </div>
 
@@ -31,5 +32,5 @@
 <div class="form-group" align="right">
     {!! Form::submit($formMode === 'edit' ? 'Ubah' : 'Buat', ['class' => 'btn btn-primary']) !!}
     {!! Form::reset('Reset', ['class' => 'btn btn-warning']) !!}
-    <a href="#" onClick="javascript:history.go(-1)" class="btn btn-danger">Batak</a>
+    <a href="#" onClick="javascript:history.go(-1)" class="btn btn-danger">Batal</a>
 </div>

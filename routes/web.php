@@ -16,8 +16,9 @@ use App\Http\Controllers\Admin\PenarikanSaldoController;
 
 Route::get('/', 'Home\HomeController@index');
 Route::get('/profile', 'Home\HomeController@profile');
-Route::post('/profile/update', 'Home\HomeController@profileUpdate');
+Route::post('/profile/update/{id}', 'Home\HomeController@profileUpdate');
 Route::get('/get-harga-beli/{id}', 'Home\HomeController@getSampahDetail');
+Route::get('/get-data-sampah/{id}', 'Home\HomeController@getDataSampah');
 // Route::get('/panggilchart', function(){
 //     return view('admin.chart1');
 // });
@@ -39,6 +40,10 @@ Route::get('/pengepul', 'Home\HomeController@indexPengepul');
 Route::get('/pengepul/pembelian', 'Home\HomeController@purchase');
 Route::post('/pengepul/beli', 'Home\HomeController@storePurchase');
 Route::get('/get-detail-pembelian/{id}', 'Home\HomeController@detailpembelian');
+Route::get('/lupa-password', 'Home\HomeController@lupaPassword');
+Route::post('/lupa-password', 'Home\HomeController@prosesLupaPassword');
+Route::get('/reset_password/{id}', 'Home\HomeController@resetPassword');
+Route::post('/reset_password/{id}', 'Home\HomeController@prosesResetPassword');
 
 
 
@@ -49,8 +54,7 @@ Route::post('/user-login', 'Home\HomeController@userLogin')->name('login.user');
 Route::get('/user-logout', 'Home\HomeController@userLogout')->name('logout.user');
 
 Auth::routes();
-Route::get('logout', function ()
-{
+Route::get('logout', function () {
     auth()->logout();
     Session()->flush();
 
