@@ -55,15 +55,25 @@
                     <div class="card shadow-sm product mb-3">
                         <div class="card-body">
                             <form action="{{ url('withdraw') }}" method="get">
-                                <div class="row mb-2">
-                                    <div class="form-group col-lg-4 col-6">
-                                        <label class="form-label" for="date">Search</label>
-                                        <input type="date" id="date" name="date" class="form-control" />
+                                @csrf
+                                <div class="row align-items-end">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="start_date">Tanggal Mulai</label>
+                                            <input type="date" class="form-control" id="start_date"
+                                                name="start_date">
+                                        </div>
                                     </div>
-                                    <div class="form-group col-lg-6 col-6 row align-items-end">
-                                        <button type="submit" class="btn btn-primary btn-sm w-25">
-                                            <i class="bi bi-search text-white"></i>
-                                        </button>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="end_date">Tanggal Akhir</label>
+                                            <input type="date" class="form-control" id="end_date" name="end_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>

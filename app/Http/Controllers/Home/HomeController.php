@@ -154,9 +154,9 @@ class HomeController extends Controller
         if (Auth::id() == null) {
             return view('home.login');
         }
-        if (isset($_GET['date'])) {
-            $data['withdraw'] = PenarikanSaldo::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->orderBy('created_at', 'desc')->get();
-            $limit['wd'] = PenarikanSaldo::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
+        if (isset($_GET['start_date'])) {
+            $data['withdraw'] = PenarikanSaldo::whereBetween('updated_at', [$_GET['start_date'], $_GET['end_date']])->where('id_nasabah', Auth::id())->orderBy('created_at', 'desc')->get();
+            $limit['wd'] = PenarikanSaldo::whereBetween('updated_at', [$_GET['start_date'], $_GET['end_date']])->where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
         } else {
             $data['withdraw'] = PenarikanSaldo::where('id_nasabah', Auth::id())->orderBy('created_at', 'desc')->get();
             $limit['wd'] = PenarikanSaldo::where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
@@ -191,14 +191,15 @@ class HomeController extends Controller
         alert()->success('Request Penarikan Berhasil');
         return redirect('/');
     }
+
     public function sell()
     {
         if (Auth::id() == null) {
             return view('home.login');
         }
-        if (isset($_GET['date'])) {
-            $data['penjualan'] = PenjualanSampah::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->orderBy('id', 'desc')->get();
-            $limit['penjualans'] = PenjualanSampah::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->where(function ($query) {
+        if (isset($_GET['start_date'])) {
+            $data['penjualan'] = PenjualanSampah::whereBetween('updated_at', [$_GET['start_date'], $_GET['end_date']])->where('id_nasabah', Auth::id())->orderBy('id', 'desc')->get();
+            $limit['penjualans'] = PenjualanSampah::whereBetween('updated_at', [$_GET['start_date'], $_GET['end_date']])->where('id_nasabah', Auth::id())->where(function ($query) {
                 $query->where('status_penjualan', 'Menunggu Konfirmasi Admin')
                     ->orWhere('status_penjualan', 'Menunggu Kedatangan Petugas');
             })->exists();
