@@ -60,13 +60,14 @@
                                         </h6>
                                         <h6 class="text-color-theme">Alamat : {{ $item->penjualan->nasabah->address }}
                                         </h6>
-                                        <h6 class="text-color-theme">Tanggal : {{ $item->tanggal }}</h6>
+                                        <h6 class="text-color-theme">Tanggal : {{ $item->hari }}</h6>
                                         <div class="row">
                                             <div class="col">
-                                                <p class="text-primary">Status : {{ $item->status }}</p>
+                                                <p class="text-primary">Status :
+                                                    {{ $item->penjualan->status_penjualan }}</p>
                                             </div>
                                         </div>
-                                        @if ($item->status != 'Sampah Telah Diambil')
+                                        @if ($item->penjualan->status_penjualan != 'Penjualan Berhasil')
                                             <div class="row">
                                                 <div class="d-grid">
                                                     <button class="btn btn-sm btn-warning shadow-sm mt-2 mb-2"
@@ -118,7 +119,18 @@
                                                                                     @php
                                                                                         $total = null;
                                                                                     @endphp
-                                                                                    =>{{ $sampah->sampah->nama_sampah }}
+                                                                                    <select name="sampah"
+                                                                                        class="from-controll">
+                                                                                        @foreach ($sampahs as $itemm)
+                                                                                            <option
+                                                                                                value="{{ $itemm->id }}"
+                                                                                                @if ($itemm->nama_sampah == $sampah->sampah->nama_sampah) selected @endif>
+                                                                                                {{ $itemm->nama_sampah }}
+                                                                                            </option>
+                                                                                        @endforeach
+
+                                                                                    </select>
+                                                                                    {{-- =>{{ $sampah->sampah->nama_sampah }} --}}
                                                                                     <input type="text"
                                                                                         name="detail_id"
                                                                                         value="{{ $sampah->id }}"

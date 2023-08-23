@@ -12,9 +12,8 @@ use App\Models\PenjualanSampah;
 use App\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
-use DB;
 
-class JadwalPengambilanController extends Controller
+class JadwalPetugas extends Controller
 {
     /**
      * Create a new controller instance.
@@ -35,37 +34,15 @@ class JadwalPengambilanController extends Controller
      *
      * @return \Illuminate\View\View
      */
+
     public function index(Request $request)
     {
         $perPage = 25;
-        $jadwal = Jadwal::all();
-        $petugas = User::where('role', 'petugas')->get();
-        return view('admin.jadwal-pengambilan.index', compact('jadwal', 'petugas'));
+        $jadwal = Jadwal::with('petugas', hari())->latest()->paginate($perPage);
+
+        $data['jadwal'] = $jadwal;
+        return view('admin.jadwal.index', $data);
     }
-
-    public function petugas($id)
-    {
-        $jadwal = Jadwal::find($id);
-        $allJadwal = Jadwal::join('penjualan_sampahs', 'penjualan_sampahs.id', '=', 'jadwals.id_penjualan', 'left')->select('jadwals.*', 'penjualan_sampahs.status_penjualan')->where('hari', $jadwal->hari)->where('jam_start', $jadwal->jam_start)->where('jam_end', $jadwal->jam_end)->where('status_penjualan', 'Menunggu Kedatangan Petugas')->get();
-        // dd($allJadwal);
-        foreach ($allJadwal as $item) {
-            // dd($item->petugas->id);
-            if ($item->id_petugas !== null) {
-                if ($item->id_petugas == Request()->petugas) {
-                    return back();
-                }
-            }
-        }
-
-        $jadwal->update([
-            'id_petugas' => Request()->petugas
-        ]);
-        $penjualan = PenjualanSampah::find($jadwal->id_penjualan);
-        $penjualan->status_penjualan = 'Menunggu Kedatangan Petugas';
-        $penjualan->save();
-        return back();
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -184,4 +161,7 @@ class JadwalPengambilanController extends Controller
 
         return redirect('admin/jadwal-pengambilan');
     }
+
+    //JADWAL NEW UPDATE
+
 }

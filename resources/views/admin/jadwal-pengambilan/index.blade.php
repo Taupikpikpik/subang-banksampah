@@ -26,8 +26,8 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Data Jadwal Pengambilan</h4>
-                    <a href="{{ url('/admin/jadwal-pengambilan' . '/create') }}" class="btn btn-success mr-2"><i
-                            class="fa fa-plus mr-1"></i> Buat Jadwal </a>
+                    {{-- <a href="{{ url('/admin/jadwal-pengambilan' . '/create') }}" class="btn btn-success mr-2"><i
+                            class="fa fa-plus mr-1"></i> Buat Jadwal </a> --}}
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -37,57 +37,38 @@
                                     <th>No.</th>
                                     <th>Nama Nasabah</th>
                                     <th>Alamat Nasabah</th>
-                                    <th>Petugas</th>
-                                    <th>Tanggal</th>
+                                    <th>Hari</th>
+                                    <th>Jam Mulai</th>
+                                    <th>Jam Selesai</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Pilih Petugas</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($jadwalpengambilan as $i => $item)
+                                @foreach ($jadwal as $item)
                                     <tr>
-                                        <td>{{ $i + 1 }}</td>
-                                        <td>{{ $item->penjualan->nasabah->name }}</td>
-                                        <td>{{ $item->penjualan->nasabah->address }}</td>
-                                        <td>{{ $item->petugas->name }}</td>
-                                        <td>{{ $item->tanggal }}</td>
-                                        <td>{{ $item->status }}</td>
-                                        <td class="text-left">
-                                            <a href="{{ url('/admin/jadwal-pengambilan/' . $item->id) }}"
-                                                class="btn btn-sm btn-primary btn-rounded mr-2">
-                                                <i class="far fa-eye mr-1"></i> Lihat </a>
-                                            @if ($item->status == 'Sampah Telah Diambil')
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->user->name }}</td>
+                                        <td>{{ $item->user->address }}</td>
+                                        <td>{{ $item->hari }}</td>
+                                        <td>{{ $item->jam_start }}</td>
+                                        <td>{{ $item->jam_end }}</td>
+                                        <td>{{ $item->penjualan->status_penjualan }}</td>
+                                        <td>
+                                            @if (!$item->id_petugas)
+                                                <form action="/updateJadwal/petugas/{{ $item->id }}" method="post">
+                                                    @csrf
+                                                    <select name="petugas" class="form-control">
+                                                        @foreach ($petugas as $data)
+                                                            <option value="{{ $data->id }}">{{ $data->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <button class="submit btn btn-sm btn-primary">Pilih</button>
+                                                </form>
                                             @else
-                                                <a href="{{ url('/admin/jadwal-pengambilan/' . $item->id . '/edit') }}"
-                                                    class="btn btn-sm btn-warning btn-rounded mr-2">
-                                                    <i class="far fa-edit mr-1"></i> Ubah </a>
+                                                {{ $item->petugas->name }}
                                             @endif
-                                            {{-- <button type="button" class="btn btn-sm btn-danger btn-rounded mr-2" data-toggle="modal"
-                                        data-target="#deleteConfirm{{$item->id}}"><i class="fa fa-trash-alt" aria-hidden="true"></i> Delete</button>
-                                    <div class="modal fade" id="deleteConfirm{{$item->id}}" tabindex="-1" role="dialog"
-                                        aria-labelledby="modal-block-popout" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-body">
-                                                    Are you sure want to delete this record?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-warning btn-sm" data-dismiss="modal">Close</button>
-                                                    {!! Form::open([
-                                                        'method' => 'DELETE',
-                                                        'url' => ['/admin/jadwal-pengambilan', $item->id],
-                                                        'style' => 'display:inline'
-                                                    ]) !!}
-                                                    {!! Form::button('Delete', array(
-                                                            'type' => 'submit',
-                                                            'class' => 'btn btn-danger btn-sm',
-                                                            'title' => 'Confirm Delete'
-                                                    )) !!}
-                                                    {!! Form::close() !!}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> --}}
                                         </td>
                                     </tr>
                                 @endforeach

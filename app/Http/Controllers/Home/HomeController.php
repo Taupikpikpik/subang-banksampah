@@ -15,6 +15,7 @@ use App\Models\JadwalPengambilan;
 use App\Models\TransaksiSampah;
 use App\Models\Saldo;
 use App\Models\PenarikanSaldo;
+use App\Models\Jadwal;
 use Alert;
 use App\Mail\kirimEmail;
 use Illuminate\Http\Request;
@@ -153,8 +154,13 @@ class HomeController extends Controller
         if (Auth::id() == null) {
             return view('home.login');
         }
-        $data['withdraw'] = PenarikanSaldo::where('id_nasabah', Auth::id())->get();
-        $limit['wd'] = PenarikanSaldo::where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
+        if (isset($_GET['date'])) {
+            $data['withdraw'] = PenarikanSaldo::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->orderBy('created_at', 'desc')->get();
+            $limit['wd'] = PenarikanSaldo::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
+        } else {
+            $data['withdraw'] = PenarikanSaldo::where('id_nasabah', Auth::id())->orderBy('created_at', 'desc')->get();
+            $limit['wd'] = PenarikanSaldo::where('id_nasabah', Auth::id())->where('status', "Menunggu Penukaran Kode")->orWhere('status', "Penarikan Diproses")->exists();
+        }
         return view('home.withdraw', $data, $limit);
     }
 
@@ -190,11 +196,19 @@ class HomeController extends Controller
         if (Auth::id() == null) {
             return view('home.login');
         }
-        $data['penjualan'] = PenjualanSampah::where('id_nasabah', Auth::id())->get();
-        $limit['penjualans'] = PenjualanSampah::where('id_nasabah', Auth::id())->where(function ($query) {
-            $query->where('status_penjualan', 'Menunggu Konfirmasi Admin')
-                ->orWhere('status_penjualan', 'Menunggu Kedatangan Petugas');
-        })->exists();
+        if (isset($_GET['date'])) {
+            $data['penjualan'] = PenjualanSampah::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->orderBy('id', 'desc')->get();
+            $limit['penjualans'] = PenjualanSampah::where('created_at', 'like', '%' . $_GET['date'] . '%')->where('id_nasabah', Auth::id())->where(function ($query) {
+                $query->where('status_penjualan', 'Menunggu Konfirmasi Admin')
+                    ->orWhere('status_penjualan', 'Menunggu Kedatangan Petugas');
+            })->exists();
+        } else {
+            $data['penjualan'] = PenjualanSampah::where('id_nasabah', Auth::id())->orderBy('id', 'desc')->get();
+            $limit['penjualans'] = PenjualanSampah::where('id_nasabah', Auth::id())->where(function ($query) {
+                $query->where('status_penjualan', 'Menunggu Konfirmasi Admin')
+                    ->orWhere('status_penjualan', 'Menunggu Kedatangan Petugas');
+            })->exists();
+        }
 
         return view('home.sell', $data, $limit);
     }
@@ -208,29 +222,64 @@ class HomeController extends Controller
         ]);
     }
 
-    public function jadwalNasabah()
+    public function jadwalNasabah($id)
     {
-        $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
-            ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
-            ->where('penjualan_sampahs.id_nasabah', Auth::id())->get();
-        return view('home.jadwal-nasabah', $data);
+
+
+        if (isset($_GET['date'])) {
+            $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
+                ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
+                ->where('penjualan_sampahs.id_nasabah', Auth::id())
+                ->where('tanggal', "Like", "%" . $_GET['date'] . "%")
+                ->orderBy('tanggal', 'desc')
+                ->get();
+        } else {
+            $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
+                ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
+                ->where('penjualan_sampahs.id_nasabah', Auth::id())
+                ->orderBy('tanggal', 'desc')
+                ->get();
+        }
+        $id_penjualan = $id;
+        $petugas = User::where('role', 'petugas')->get();
+        $nasabah = Auth::user();
+        $jadwals = Jadwal::where('id_user', $nasabah->id)->first();
+        return view('home.jadwal-nasabah', $data, compact('petugas', 'nasabah', 'jadwals', 'id_penjualan'));
     }
 
+    public function updateJadwal($id)
+    {
+
+
+        $jam_end = date('H:i:s', strtotime('+1 hour', strtotime(request('jam'))));
+        // Create a new schedule
+        $jadwal = new Jadwal();
+        $jadwal->id_user = Auth::user()->id; // Assuming 'user_id' is the column in the 'jadwals' table
+        $jadwal->id_penjualan = $id;
+        $jadwal->hari = request('hari');
+        $jadwal->jam_start = request('jam');
+        $jadwal->jam_end = $jam_end;
+        $jadwal->save();
+        return redirect('/');
+    }
     public function jadwalPetugas()
     {
-        $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
-            ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
-            ->where('jadwal_pengambilan.id_petugas', Auth::id())->get();
-
+        // $data['jadwal'] = JadwalPengambilan::with('petugas')->join('penjualan_sampahs', 'penjualan_sampahs.id', 'jadwal_pengambilan.id_penjualan')
+        //     ->select('penjualan_sampahs.id_nasabah', 'jadwal_pengambilan.*')
+        //     ->where('jadwal_pengambilan.id_petugas', Auth::id())->get();
+        $data['sampahs'] = DB::table('bank_sampahs')->get();
+        $data['jadwal'] = Jadwal::with('petugas', 'penjualan')->where('id_petugas', Auth::id())->get();
         $data['detail'] = PenjualanSampahDetail::all();
+
         return view('home.jadwal-petugas', $data);
     }
 
     public function petugasApprove($id)
     {
-        $jadwal = JadwalPengambilan::find($id);
-        $jadwal->status = 'Sampah Telah Diambil';
-        $jadwal->save();
+        $jadwal = Jadwal::find($id);
+        $penjualan = PenjualanSampah::find($jadwal->id_penjualan);
+        $penjualan->status_penjualan = 'Penjualan Berhasil';
+        $penjualan->save();
 
         $total_penjualan = 0;
         $penjualan = PenjualanSampahDetail::where('id_penjualan_sampah', $jadwal->id_penjualan)->get();
@@ -280,13 +329,14 @@ class HomeController extends Controller
 
     public function storeSell(Request $request)
     {
+
         $data_detail = [];
         $getData = PenjualanSampah::where('status_penjualan', 'Menunggu Konfirmasi Admin')->where('id_nasabah', Auth::id())->count();
 
-        if ($getData > 0) {
-            alert()->error('Ada request penjualan yang belum diproses');
-            return redirect('/sell/create');
-        }
+        // if ($getData > 0) {
+        //     alert()->error('Ada request penjualan yang belum diproses');
+        //     return redirect('/sell/create');
+        // }
 
         // dd($request);
         $insert_sampah = PenjualanSampah::create([
@@ -313,7 +363,9 @@ class HomeController extends Controller
         $transaksi->save();
 
         alert()->success('Request Penjualan Berhasil');
-        return redirect('/');
+        $cekdata = DB::table('penjualan_sampahs')->where('id_nasabah', Auth::user()->id)->orderBy('id', 'DESC')->first();
+
+        return redirect()->route('jadwal', $cekdata->id);
     }
 
     public function getSampahDetail($id)

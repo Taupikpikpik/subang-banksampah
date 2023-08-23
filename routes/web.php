@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PenarikanSaldoController;
+use App\Http\Controllers\Home\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Route::get('/get-data-sampah/{id}', 'Home\HomeController@getDataSampah');
 //     return view('admin.chart1');
 // });
 
-Route::get('/nasabah/jadwal', 'Home\HomeController@jadwalNasabah');
+Route::match(['get', 'post'], '/nasabah/jadwal/{id}', 'Home\HomeController@jadwalNasabah')->name('jadwal');
 Route::get('/withdraw', 'Home\HomeController@withdraw');
 Route::get('/withdraw/create', 'Home\HomeController@createWithdraw');
 Route::post('/withdraw/store', 'Home\HomeController@storeWithdraw');
@@ -31,6 +32,7 @@ Route::get('/sell', 'Home\HomeController@sell');
 Route::get('/sell/create', 'Home\HomeController@createSell');
 Route::get('/get-detail-penjualan/{id}', 'Home\HomeController@detailPenjualan');
 Route::post('/sell/store', 'Home\HomeController@storeSell');
+Route::post('/jadwal/update/{id}', 'Home\HomeController@updateJadwal');
 
 Route::get('/petugas', 'Home\HomeController@indexPetugas');
 Route::get('/petugas/jadwal', 'Home\HomeController@jadwalPetugas');
@@ -79,6 +81,8 @@ Route::post('admin/pembelian-sampah/reject/{id}', 'Admin\PembelianSampahControll
 Route::resource('admin/transaksi-sampah', 'Admin\\TransaksiSampahController');
 Route::resource('admin/saldo', 'Admin\\SaldoController');
 Route::resource('admin/jadwal-pengambilan', 'Admin\\JadwalPengambilanController');
+Route::post('/updateJadwal/petugas/{id}', 'Admin\JadwalPengambilanController@petugas');
+Route::resource('admin/jadwal', 'Admin\\JadwalPetugas');
 Route::resource('admin/penarikan-saldo', 'Admin\\PenarikanSaldoController');
 Route::post('admin/penarikan-saldo/reject/{id}', [PenarikanSaldoController::class, 'reject'])->name('reject-saldo');
 Route::get('admin/penarikan-saldo/approve/{id}', 'Admin\PenarikanSaldoController@approve');

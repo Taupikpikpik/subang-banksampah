@@ -27,7 +27,7 @@
         <header class="container-fluid header">
             <div class="row h-100">
                 <div class="col-auto align-self-center">
-                    <a href="{{url('/')}}" class="btn btn-link back-btn text-color-theme">
+                    <a href="{{ url('/') }}" class="btn btn-link back-btn text-color-theme">
                         <i class="bi bi-arrow-left size-20"></i>
                     </a>
                 </div>
@@ -35,12 +35,12 @@
                     <h5 class="mb-0">Daftar Penjualan</h5>
                 </div>
                 <div class="col-auto align-self-center">
-                    @if($penjualans)
-                    <label>limit</label>
+                    @if ($penjualans)
+                        <label>limit</label>
                     @else
-                    <a href="{{url('/sell/create')}}" class="link text-color-theme">
-                        <i class="bi bi-plus"></i>
-                    </a>
+                        <a href="{{ url('/sell/create') }}" class="link text-color-theme">
+                            <i class="bi bi-plus"></i>
+                        </a>
                     @endif
                 </div>
             </div>
@@ -51,26 +51,48 @@
         <div class="main-container container">
 
             <div class="row mb-2">
-                @foreach($penjualan as $key => $item)
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-12 col-lg-12">
                     <div class="card shadow-sm product mb-3">
-                        <div class="card-body p-4">
-                            <div class="row">
-                                <div class="col ps-0 align-self-center">
-                                    <div class="row">
-                                        <div class="col">
-                                            <p class="text-primary">
-                                                Penjualan {{$key+1}} <br>
-                                                Status : {{$item->status_penjualan}}
-                                            </p>
-                                            <button type="button" onclick="detailData(<?= $item->id ?>)" class="btn btn-info text-white">Detail</button>
+                        <div class="card-body">
+                            <form action="{{ url('sell') }}" method="get">
+                                <div class="row mb-2">
+                                    <div class="form-group col-lg-4 col-6">
+                                        <label class="form-label" for="date">Search</label>
+                                        <input type="date" id="date" name="date" class="form-control" />
+                                    </div>
+                                    <div class="form-group col-lg-6 col-6 row align-items-end">
+                                        <button type="submit" class="btn btn-primary btn-sm w-25">
+                                            <i class="bi bi-search text-white"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @foreach ($penjualan as $key => $item)
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <div class="card shadow-sm product mb-3">
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col ps-0 align-self-center">
+                                        <div class="row">
+                                            <div class="col">
+                                                <p class="text-primary">
+                                                    Penjualan {{ $loop->iteration }} <br>
+                                                    <br>
+                                                    Status : {{ $item->status_penjualan }}
+                                                </p>
+                                                <h6 class="text-color-theme">Tanggal : {{ $item->updated_at }}</h6>
+                                                <button type="button" onclick="detailData(<?= $item->id ?>)"
+                                                    class="btn btn-info text-white">Detail</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
 
@@ -79,17 +101,18 @@
     </main>
     <!-- Page ends-->
 
-    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Detail Penjualan</h5>
-            <button type="button" class="btn btn-secondary btn-close bg-light"></button>
-          </div>
-          <div class="modal-body modal-detail">
-          </div>
+    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Detail Penjualan</h5>
+                    <button type="button" class="btn btn-secondary btn-close bg-light"></button>
+                </div>
+                <div class="modal-body modal-detail">
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     @include('home.partials.scripts')
@@ -108,7 +131,7 @@
                             </tr>`
                     let total = 0
 
-                    $.each(res.data, (i,val) => {
+                    $.each(res.data, (i, val) => {
                         dataSampah += `
                             <tr>
                                 <td>${i+1}</td>
@@ -119,7 +142,7 @@
                         `
                         total += parseInt(val.total)
                     })
-                        dataSampah += `
+                    dataSampah += `
                             <tr>
                                 <td colspan="3">&nbsp;</td>
                                 <td>${total}</td>
@@ -136,7 +159,7 @@
             });
         }
 
-        $('.btn-close').click(function(){
+        $('.btn-close').click(function() {
             $('#modalDetail').modal('hide')
         })
     </script>

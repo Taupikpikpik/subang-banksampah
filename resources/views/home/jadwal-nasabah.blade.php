@@ -38,7 +38,7 @@
                     </a>
                 </div>
                 <div class="col text-center align-self-center">
-                    <h5 class="mb-0">Daftar Jadwal Pengambilan</h5>
+                    <h5 class="mb-0">Jadwal Pengambilan</h5>
                 </div>
                 <div class="col-auto align-self-center">
                     <a href="{{ url('/sell/create') }}" class="link text-color-theme">
@@ -50,48 +50,42 @@
         <!-- Header ends -->
 
         <!-- main page content -->
+
         <div class="main-container container">
-
             <div class="row mb-2">
-                @foreach ($jadwal as $item)
-                    @php
-
-                        $detailpen = PenjualanSampahDetail::with('sampah')
-                            ->with('penjualan_sampah')
-                            ->where('id_penjualan_sampah', $item->id)
-                            ->first();
-                    @endphp
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card shadow-sm product mb-3">
-                            <div class="card-body">
-                                <div class="row p-3">
-                                    <div class="col ps-0 align-self-center">
-                                        <p class="mb-0">
-                                            <small class="text-opac">ID Penjualan : {{ $item->id }}</small>
-                                        </p>
-                                        <h6 class="text-color-theme">Petugas : {{ $item->petugas->name }}</h6>
-                                        <h6 class="text-color-theme">Sampah :
-                                            {{ $detailpen->sampah->nama_sampah }}</h6>
-                                        <h6 class="text-color-theme">Kuantitas : {{ $detailpen->kuantitas }}Kg
-                                        </h6>
-                                        <h6 class="text-color-theme">Tanggal : {{ $item->tanggal }}</h6>
-                                        <div class="row">
-                                            <div class="col">
-                                                @if ($item->status == 'Sampah Telah Diambil')
-                                                    <p class="text-primary">Status : {{ $item->status }}</p>
-                                                @else
-                                                    <p class="text-primary">Status : Menunggu Pembuatan Jadwal</p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
+                <div class="card shadow-sm product mb-3">
+                    <div class="card-body">
+                        <form action="/jadwal/update/{{ $id_penjualan }}" method="POST">
+                            <input type="text" id="now" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"
+                                hidden>
+                            @csrf
+                            <center>
+                                <label for="nasabah">Nama : {{ $nasabah->name }}</label>
+                                <input type="text" value="{{ $nasabah->id }}" hidden>
+                            </center>
+                            <div class="row p-3">
+                                <div class="col-lg-3">
+                                    <label for="hari" class="form-label">Tanggal</label>
+                                    <input onchange="cek()" id="tanggal" type="date" class="form-control"
+                                        name="hari">
+                                    <span style="color:red;display:none;" id="peringatan">Tanggal Minimal Lebih Dari
+                                        Hari Ini.</span>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="jam" class="form-label">Jam</label>
+                                    <input type="time" class="form-control" name="jam"
+                                        value="{{ $jadwals ? $jadwals->jam_start : '' }}">
                                 </div>
                             </div>
-                        </div>
+                            <br>
+                            <center>
+                                <button id="kirim" class="btn btn-primary" hidden>Update</button>
+                            </center>
+                            <a onclick="send()" href="#" class="btn btn-primary">Update</a>
+                        </form>
                     </div>
-                @endforeach
+                </div>
             </div>
-
         </div>
         <!-- main page content ends -->
 
@@ -102,6 +96,27 @@
 
 
     @include('home.partials.scripts')
+    <script>
+        function cek() {
+            var tgl = $("#tanggal").val();
+            var now = $("#now").val();
+            if (tgl > now) {
+                document.getElementById("peringatan").style.display = "none"
+            } else {
+                document.getElementById("peringatan").style.display = "block"
+            }
+        }
+
+        function send() {
+            var tgl = $("#tanggal").val();
+            var now = $("#now").val();
+            if (tgl > now) {
+                document.getElementById("kirim").click()
+            } else {
+                document.getElementById("peringatan").style.display = "block"
+            }
+        }
+    </script>
 
 </body>
 

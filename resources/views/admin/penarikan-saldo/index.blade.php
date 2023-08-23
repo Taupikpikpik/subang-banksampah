@@ -64,6 +64,9 @@
                                                                     method="post">
                                                                     @csrf
                                                                     Apa anda ingin menyetujui penarikan?
+                                                                    <div>
+                                                                        <textarea name="ket" class="form-control" placeholder="keterangan"></textarea>
+                                                                    </div>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-warning btn-sm"

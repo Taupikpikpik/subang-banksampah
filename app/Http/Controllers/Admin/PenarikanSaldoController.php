@@ -20,7 +20,7 @@ class PenarikanSaldoController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -53,11 +53,11 @@ class PenarikanSaldoController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $requestData = $request->all();
-        
+
         PenarikanSaldo::create($requestData);
-        alert()->success('New ' . 'PenarikanSaldo'. ' Created!' );
+        alert()->success('New ' . 'PenarikanSaldo' . ' Created!');
 
         return redirect('admin/penarikan-saldo');
     }
@@ -100,11 +100,11 @@ class PenarikanSaldoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
         $requestData = $request->all();
-        
+
         $penarikansaldo = PenarikanSaldo::findOrFail($id);
-        alert()->success('Record Updated!' );
+        alert()->success('Record Updated!');
         $penarikansaldo->update($requestData);
 
         return redirect('admin/penarikan-saldo');
@@ -119,7 +119,7 @@ class PenarikanSaldoController extends Controller
      */
     public function destroy($id)
     {
-        alert()->success('Record Deleted!' );
+        alert()->success('Record Deleted!');
         PenarikanSaldo::destroy($id);
 
         return redirect('admin/penarikan-saldo');
@@ -136,7 +136,7 @@ class PenarikanSaldoController extends Controller
         $saldo = Saldo::find($penarikan->id_saldo);
         $saldo->jumlah_saldo -= $penarikan->jumlah;
         $saldo->save();
-        alert()->success('Penarikan Disetuju' );
+        alert()->success('Penarikan Disetuju');
 
         return redirect('admin/penarikan-saldo');
     }
@@ -149,16 +149,18 @@ class PenarikanSaldoController extends Controller
             'ket' => $request->input('ket'),
         ]);
 
-        alert()->success('Penarikan Ditolak' );
+        alert()->success('Penarikan Ditolak');
 
         return redirect('admin/penarikan-saldo');
     }
 
-    public function izinkan($id)
+    public function izinkan($id, Request $request)
     {
         $penarikan = PenarikanSaldo::find($id);
-        $penarikan->status = 'Menunggu Penukaran Kode';
-        $penarikan->save();
+        $penarikan->update([
+            'status' => 'Menunggu Penukaran Kode',
+            'ket' => $request->input('ket'),
+        ]);
 
         return redirect('admin/penarikan-saldo');
     }
